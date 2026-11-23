@@ -93,7 +93,7 @@ $itens = pc_search_build(
     'SELECT id, titulo AS nome FROM arquetipos WHERE titulo LIKE :p ORDER BY id LIMIT 5',
     ['p' => $like],
     url('admin/arquetipos.php') . '?editar=',
-    'tabler-layers',
+    'tabler-shape',
     t('admin.archetypes')
 );
 if ($itens !== []) {
@@ -132,7 +132,7 @@ $itens = pc_search_build(
     'SELECT id, titulo AS nome FROM catalogo_obras WHERE titulo LIKE :p ORDER BY titulo LIMIT 5',
     ['p' => $like],
     url('admin/filmes.php') . '?editar=',
-    'tabler-movies',
+    'tabler-movie',
     t('admin.catalog')
 );
 if ($itens !== []) {

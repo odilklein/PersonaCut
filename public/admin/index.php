@@ -70,7 +70,7 @@ require __DIR__ . '/partials/head.php';
         ['rotulo' => t('admin.total_base'), 'valor' => $totalBase, 'icone' => 'tabler-database', 'cor' => 'info'],
         ['rotulo' => t('admin.questions'), 'valor' => $totalPerguntas, 'icone' => 'tabler-list', 'cor' => 'success'],
         ['rotulo' => t('admin.entities'), 'valor' => $totalEntidades, 'icone' => 'tabler-users', 'cor' => 'warning'],
-        ['rotulo' => t('admin.catalog'), 'valor' => $totalCatalogo, 'icone' => 'tabler-movies', 'cor' => 'primary'],
+        ['rotulo' => t('admin.catalog'), 'valor' => $totalCatalogo, 'icone' => 'tabler-movie', 'cor' => 'primary'],
         ['rotulo' => t('admin.catalog_available'), 'valor' => $totalDisponiveis, 'icone' => 'tabler-device-tv', 'cor' => 'success'],
         ['rotulo' => t('admin.catalog_people'), 'valor' => $totalPessoas, 'icone' => 'tabler-user-search', 'cor' => 'info'],
     ] as $kpi): ?>
@@ -175,8 +175,8 @@ require __DIR__ . '/partials/head.php';
         ['icone' => 'tabler-compass', 'titulo' => t('admin.axes'), 'texto' => '6 eixos', 'url' => 'eixos.php', 'cor' => 'primary'],
         ['icone' => 'tabler-list', 'titulo' => t('admin.questions'), 'texto' => $totalPerguntas . ' perguntas', 'url' => 'perguntas.php', 'cor' => 'info'],
         ['icone' => 'tabler-users', 'titulo' => t('admin.entities'), 'texto' => $totalEntidades . ' entidades', 'url' => 'entidades.php', 'cor' => 'success'],
-        ['icone' => 'tabler-layers', 'titulo' => t('admin.archetypes'), 'texto' => count($arquetipos) . ' arquétipos', 'url' => 'arquetipos.php', 'cor' => 'warning'],
-        ['icone' => 'tabler-movies', 'titulo' => t('admin.catalog'), 'texto' => numero($totalCatalogo, 0) . ' obras', 'url' => 'filmes.php', 'cor' => 'primary'],
+        ['icone' => 'tabler-shape', 'titulo' => t('admin.archetypes'), 'texto' => count($arquetipos) . ' arquétipos', 'url' => 'arquetipos.php', 'cor' => 'warning'],
+        ['icone' => 'tabler-movie', 'titulo' => t('admin.catalog'), 'texto' => numero($totalCatalogo, 0) . ' obras', 'url' => 'filmes.php', 'cor' => 'primary'],
         ['icone' => 'tabler-device-tv', 'titulo' => t('admin.platforms'), 'texto' => $totalDisponiveis . ' disponíveis', 'url' => 'plataformas.php', 'cor' => 'info'],
     ] as $atalho): ?>
         <div class="col-12 col-sm-6 col-xl-4">

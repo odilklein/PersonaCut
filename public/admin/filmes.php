@@ -33,7 +33,7 @@ if (!$temCatalogo) {
     ?>
     <div class="page-header">
         <div>
-            <h1><i class="icon-base ti tabler-movies"></i>Filmes e séries</h1>
+            <h1><i class="icon-base ti tabler-movie"></i>Filmes e séries</h1>
             <span class="page-subtitle">Gerencie os títulos usados nas recomendações e no ranking de plataformas.</span>
         </div>
     </div>
@@ -324,7 +324,7 @@ require __DIR__ . '/partials/head.php';
 
 <div class="page-header">
     <div>
-        <h1><i class="icon-base ti tabler-movies"></i>Filmes e séries</h1>
+        <h1><i class="icon-base ti tabler-movie"></i>Filmes e séries</h1>
         <span class="page-subtitle">Cadastre, edite e exclua os títulos do catálogo usados nas recomendações. O ID TMDB deve ser único por tipo.</span>
     </div>
     <div class="page-header-actions">

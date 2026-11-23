@@ -138,7 +138,7 @@ require __DIR__ . '/partials/head.php';
 
 <div class="page-header">
     <div>
-        <h1><i class="icon-base ti tabler-layers"></i><?= e(t('admin.archetypes')) ?></h1>
+        <h1><i class="icon-base ti tabler-shape"></i><?= e(t('admin.archetypes')) ?></h1>
         <span class="page-subtitle"><?= count($arquetipos) ?> arquétipos · um por eixo dominante + polo</span>
     </div>
     <div class="page-header-actions">

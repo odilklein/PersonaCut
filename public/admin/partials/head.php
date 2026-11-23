@@ -29,11 +29,11 @@ $secoesMenu = [
     'Conteúdo' => [
         ['arquivo' => 'eixos.php', 'icone' => 'compass', 'rotulo' => t('admin.axes')],
         ['arquivo' => 'perguntas.php', 'icone' => 'list', 'rotulo' => t('admin.questions')],
-        ['arquivo' => 'arquetipos.php', 'icone' => 'layers', 'rotulo' => t('admin.archetypes')],
+        ['arquivo' => 'arquetipos.php', 'icone' => 'shape', 'rotulo' => t('admin.archetypes')],
         ['arquivo' => 'entidades.php', 'icone' => 'users', 'rotulo' => t('admin.entities')],
     ],
     'Catálogo' => [
-        ['arquivo' => 'filmes.php', 'icone' => 'movies', 'rotulo' => t('admin.catalog')],
+        ['arquivo' => 'filmes.php', 'icone' => 'movie', 'rotulo' => t('admin.catalog')],
         ['arquivo' => 'plataformas.php', 'icone' => 'device-tv', 'rotulo' => t('admin.platforms')],
     ],
 ];
@@ -43,10 +43,10 @@ $sugestoesBusca = [
         ['name' => t('admin.dashboard'), 'icon' => 'tabler-layout-dashboard', 'url' => url('admin/')],
         ['name' => t('admin.axes'), 'icon' => 'tabler-compass', 'url' => url('admin/eixos.php')],
         ['name' => t('admin.questions'), 'icon' => 'tabler-list', 'url' => url('admin/perguntas.php')],
-        ['name' => t('admin.archetypes'), 'icon' => 'tabler-layers', 'url' => url('admin/arquetipos.php')],
+        ['name' => t('admin.archetypes'), 'icon' => 'tabler-shape', 'url' => url('admin/arquetipos.php')],
     ],
     'Catálogo' => [
-        ['name' => t('admin.catalog'), 'icon' => 'tabler-movies', 'url' => url('admin/filmes.php')],
+        ['name' => t('admin.catalog'), 'icon' => 'tabler-movie', 'url' => url('admin/filmes.php')],
         ['name' => t('admin.platforms'), 'icon' => 'tabler-device-tv', 'url' => url('admin/plataformas.php')],
     ],
 ];
@@ -140,12 +140,34 @@ $sugestoesBusca = [
                         <span class="menu-user-name" title="<?= e($adminNome) ?>"><?= e($adminNome) ?></span>
                         <span class="menu-user-email" title="<?= e($adminLogin) ?>"><?= e($adminLogin) ?></span>
                     </div>
-                    <form class="menu-user-logout" action="<?= e(url('admin/logout.php')) ?>" method="post">
-                        <?= Csrf::campo() ?>
-                        <button type="submit" title="<?= e(t('admin.logout')) ?>" aria-label="<?= e(t('admin.logout')) ?>">
-                            <i class="icon-base ti tabler-logout"></i>
+                    <div class="dropdown dropup menu-user-dropdown">
+                        <button type="button" class="btn btn-icon btn-text-secondary rounded-pill menu-user-actions"
+                                data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false"
+                                aria-label="Opções da conta">
+                            <i class="icon-base ti tabler-dots-vertical icon-md"></i>
                         </button>
-                    </form>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="menu-user-dropdown-header">
+                                <span class="menu-user-dropdown-name"><?= e($adminNome) ?></span>
+                                <small class="menu-user-dropdown-role"><?= e($adminLogin) ?> · painel</small>
+                            </li>
+                            <li><div class="dropdown-divider my-1"></div></li>
+                            <li>
+                                <a class="dropdown-item" href="<?= e(url('/')) ?>" target="_blank" rel="noopener">
+                                    <i class="icon-base ti tabler-external-link me-2"></i><?= e(t('admin.view_public')) ?>
+                                </a>
+                            </li>
+                            <li><div class="dropdown-divider my-1"></div></li>
+                            <li>
+                                <form action="<?= e(url('admin/logout.php')) ?>" method="post">
+                                    <?= Csrf::campo() ?>
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="icon-base ti tabler-logout me-2"></i><?= e(t('admin.logout')) ?>
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </aside>
