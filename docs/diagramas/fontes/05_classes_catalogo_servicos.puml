@@ -1,0 +1,66 @@
+@startuml 05_classes_catalogo_servicos
+!include _tema.puml
+skinparam linetype ortho
+hide circle
+skinparam classAttributeIconSize 0
+skinparam nodesep 35
+skinparam ranksep 40
+top to bottom direction
+
+class CatalogoObra #FBF3E3 {
+  id : int
+  tmdb_id : int
+  tipo : filme | serie
+  titulo : string
+  ano : smallint
+  eixo_1..8 : tinyint
+  confianca : tinyint
+  poster_path : string
+}
+
+class CatalogoPessoa #FBF3E3 {
+  id : int
+  tmdb_id : int
+  nome : string
+  conhecido_por : string
+}
+
+class CatalogoCredito #FBF3E3 {
+  id : bigint
+  obra_id : int
+  pessoa_id : int
+  funcao : cast | director
+  ordem : tinyint
+}
+
+class Plataforma #FBF3E3 {
+  id : int
+  slug : string
+  nome : string
+  preco : decimal
+  ativa : bool
+}
+
+class Genero #FBF3E3 {
+  id : smallint
+  nome : string
+}
+
+class Pais #FBF3E3 {
+  codigo : char(2)
+  nome : string
+}
+
+CatalogoObra "1" -- "0..*" CatalogoCredito : credita
+CatalogoPessoa "1" -- "0..*" CatalogoCredito : participa
+CatalogoObra "0..*" -- "0..*" Plataforma : disponível
+CatalogoObra "0..*" -- "0..*" Genero : classificado
+CatalogoObra "0..*" -- "0..*" Pais : origem
+
+note bottom of Plataforma
+  Serviços puros que operam sobre o catálogo:
+  RecomendacaoService, PlataformaRankingService,
+  TrilhaService, ElencoService e CalibracaoService.
+  Não conhecem PDO nem sessão; recebem e devolvem arrays.
+end note
+@enduml

@@ -1,0 +1,32 @@
+@startuml 14_fluxo_recomendacao
+!include _tema.puml
+title Do questionário à recomendação
+skinparam linetype ortho
+
+start
+:24, 36 ou 48 respostas Likert (-2..+2);
+:normaliza por eixo
+pct = 50 + 50·Σ(r·d·p)/(2·Σp);
+:vetor de 6 eixos (0..100);
+fork
+  :arquétipo mais próximo
+  (bônus de eixo dominante);
+fork again
+  :top entidades do matcher
+  (personagem, diretor, escola);
+fork again
+  :afinidade com o catálogo
+  (obras com vetor de 8 eixos);
+end fork
+:10 filmes + descobertas
+(mix clássicos/descobertas);
+:trilhas de curadoria
+(dorama, coreano, indiano, brasileiro...);
+:ranking de plataformas
+relevância + acervo + exclusivos + preço;
+:cobertura conjunta
+("Netflix + MUBI cobrem 78%");
+:retrato determinístico
+(e, se disponível, retrato por IA);
+stop
+@enduml

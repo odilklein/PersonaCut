@@ -1,0 +1,108 @@
+@startuml 10_er_conceitual
+!include _tema.puml
+title Modelo conceitual do PersonaCut
+hide methods
+hide stereotypes
+skinparam linetype ortho
+
+entity "EIXO" as EIXO #EADBC6 {
+  * id
+  --
+  nome
+  polo esquerdo
+  polo direito
+}
+
+entity "PERGUNTA" as PERGUNTA #E4EEE9 {
+  * id
+  --
+  enunciado
+  direção
+  peso
+  cena
+}
+
+entity "RESULTADO" as RESULTADO #E4EEE9 {
+  * código
+  --
+  modo
+  vetor (6 eixos)
+  origem
+}
+
+entity "ARQUÉTIPO" as ARQ #F7EBD2 {
+  * id
+  --
+  título
+  vetor de referência
+}
+
+entity "RETRATO" as RETRATO #EADBC6 {
+  * código
+  --
+  frase
+  texto
+  modelo
+}
+
+entity "ENTIDADE" as ENT #F3E8D4 {
+  * id
+  --
+  tipo
+  nome
+  vetor
+}
+
+entity "OBRA" as OBRA #F3E8D4 {
+  * id
+  --
+  título
+  ano
+}
+
+entity "CONTA" as CONTA #E4EEE9 {
+  * id
+  --
+  nome
+  usuário
+}
+
+entity "ITEM DA LISTA" as ITEM #E4EEE9 {
+  * id
+  --
+  status
+}
+
+entity "OBRA DO CATÁLOGO" as CAT #FBF3E3 {
+  * id
+  --
+  título
+  ano
+  vetor
+  confiança
+}
+
+entity "PESSOA" as PESSOA #FBF3E3 {
+  * id
+  --
+  nome
+}
+
+entity "PLATAFORMA" as PLAT #FBF3E3 {
+  * id
+  --
+  nome
+  preço
+}
+
+EIXO ||--o{ PERGUNTA : classifica
+EIXO ||--o{ ARQ : "define dominante"
+PERGUNTA }o--|| RESULTADO : compõe
+ARQ ||--o{ RESULTADO : nomeia
+RESULTADO ||--o| RETRATO : gera
+ENT ||--o{ OBRA : possui
+CONTA ||--o{ ITEM : mantém
+ITEM }o--|| CAT : referencia
+CAT }o--o{ PESSOA : credita
+CAT }o--o{ PLAT : disponível
+@enduml

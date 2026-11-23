@@ -188,8 +188,8 @@ require __DIR__ . '/partials/head.php';
     </form>
 <?php endif; ?>
 
-<div class="pc-table-wrap">
-    <table class="pc-table">
+<div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
         <thead>
         <tr>
             <th>#</th>

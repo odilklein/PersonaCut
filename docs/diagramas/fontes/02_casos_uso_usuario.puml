@@ -1,0 +1,25 @@
+@startuml 02_casos_uso_usuario
+!include _tema.puml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Usuário com conta" as U
+
+rectangle "PersonaCut — conta e lista pessoal" {
+  usecase "Criar conta\n(nome, usuário, senha)" as UC1
+  usecase "Entrar e sair" as UC2
+  usecase "Marcar obra como\n\"quero ver\"" as UC3
+  usecase "Marcar obra como\n\"já vi\"" as UC4
+  usecase "Consultar Minha Lista" as UC5
+  usecase "Remover item\nda lista" as UC6
+  usecase "Acessar o resultado\npúblico por código" as UC7
+}
+
+U --> UC1
+U --> UC2
+UC2 <.. UC3 : <<include>>
+U --> UC4
+U --> UC5
+UC5 <.. UC6 : <<include>>
+U --> UC7
+@enduml

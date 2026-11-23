@@ -1,0 +1,31 @@
+@startuml 01_casos_uso_visitante
+!include _tema.puml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Visitante" as V
+
+rectangle "PersonaCut — uso público" {
+  usecase "Ver a landing e\nos perfis de exemplo" as UC1
+  usecase "Escolher o formato\ndo questionário" as UC2
+  usecase "Responder o quiz\n(24, 36 ou 48 itens)" as UC3
+  usecase "Entender um eixo\n(guia editorial)" as UC4
+  usecase "Receber o código\npúblico de 8 caracteres" as UC5
+  usecase "Consultar o resultado\npelo código" as UC6
+  usecase "Explorar leituras,\nfilmes e arquétipo" as UC7
+  usecase "Ver onde assistir\n(ranking de plataformas)" as UC8
+  usecase "Baixar o card 9:16\ne compartilhar" as UC9
+  usecase "Comparar dois perfis\n(Sinergia)" as UC10
+}
+
+V --> UC1
+V --> UC2
+UC2 <.. UC3 : <<include>>
+V --> UC4
+UC3 --> UC5
+V --> UC6
+UC6 <.. UC7 : <<include>>
+UC6 <.. UC8 : <<include>>
+UC6 <.. UC9 : <<include>>
+V --> UC10
+@enduml

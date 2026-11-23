@@ -1,0 +1,36 @@
+@startuml 06_sequencia_quiz
+!include _tema.puml
+title Envio do quiz e geração do código público
+
+actor "Visitante" as V
+participant "quiz.php" as Q
+participant "quiz.js" as JS
+participant "api/quiz.php" as API
+participant "QuizController" as C
+participant "LikertCalculatorService" as L
+participant "MatcherService" as M
+database "MySQL" as DB
+
+V -> Q : escolhe o formato
+Q -> DB : carrega perguntas e eixos
+DB --> Q : 24, 36 ou 48 itens
+Q -> Q : serializa quiz-config + CSRF
+Q --> V : questionário
+V -> JS : responde (-2..+2)
+JS -> JS : rascunho em localStorage
+V -> JS : envia
+JS -> API : POST { modo, respostas, csrf }
+API -> API : valida CSRF + rate limit (12/min)
+API -> C : processar(modo, respostas)
+C -> L : validarRespostas()
+L --> C : ok / erro
+C -> L : calcular()
+L --> C : vetor de 6 eixos (0..100)
+C -> M : resolverArquetipo(vetor)
+M --> C : arquétipo + distribuição
+C -> DB : INSERT resultado + código único
+DB --> C : codigo_unico (8 chars)
+C --> API : { ok, codigo, redirect }
+API --> JS : 200 JSON
+JS --> V : redireciona para resultado.php
+@enduml

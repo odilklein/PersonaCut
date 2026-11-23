@@ -1,0 +1,30 @@
+@startuml 07_sequencia_resultado
+!include _tema.puml
+title Montagem do resultado a partir do código
+
+actor "Visitante" as V
+participant "resultado.php" as R
+participant "PerfilController" as P
+participant "MatcherService" as M
+participant "CalibracaoService" as CAL
+participant "RecomendacaoService" as REC
+participant "PlataformaRankingService" as PR
+database "MySQL" as DB
+
+V -> R : GET resultado.php?codigo=XXXXXXXX
+R -> P : montar(codigo)
+P -> DB : resultado, eixos, arquétipos e entidades
+DB --> P : vetor salvo + catálogo
+P -> M : ranquear(vetor, entidades)
+M --> P : entidades por distância
+P -> CAL : posição, margem e bootstrap
+CAL --> P : confiança por tipo de entidade
+P -> DB : consulta obras do catálogo
+P -> REC : ranquear(vetor, obras)
+REC --> P : 10 filmes + descobertas
+P -> PR : ranquear(vetor, obras, plataformas)
+PR --> P : pódio + cobertura conjunta
+P -> P : leituras, insights, trilhas e elenco
+P --> R : view model pronto
+R --> V : dashboard + retrospectiva + card 9:16
+@enduml

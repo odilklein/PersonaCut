@@ -161,8 +161,8 @@ require __DIR__ . '/partials/head.php';
     <form class="pc-form pc-mb-3" method="post" action="<?= url('admin/plataformas.php') ?>">
         <?= Csrf::campo() ?>
 
-        <div class="pc-table-wrap">
-            <table class="pc-table">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
                 <thead>
                     <tr>
                         <th><?= e(t('admin.platforms_name')) ?></th>

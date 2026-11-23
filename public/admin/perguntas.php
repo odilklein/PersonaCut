@@ -532,8 +532,8 @@ require __DIR__ . '/partials/head.php';
     <?php endif; ?>
 <?php endif; ?>
 
-<div class="pc-table-wrap">
-    <table class="pc-table">
+<div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
         <thead>
         <tr>
             <th>#</th>

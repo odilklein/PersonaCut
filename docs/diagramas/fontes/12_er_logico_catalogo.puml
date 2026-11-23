@@ -1,0 +1,83 @@
+@startuml 12_er_logico_catalogo
+!include _tema.puml
+title Modelo lógico — catálogo audiovisual e streaming
+hide methods
+hide stereotypes
+skinparam linetype ortho
+
+entity "catalogo_obras" as obras #FBF3E3 {
+  * id : INT <<PK>>
+  --
+  tmdb_id : INT <<UQ>>
+  tipo : ENUM
+  titulo : VARCHAR(200)
+  ano : SMALLINT
+  eixo_1..8 : TINYINT
+  confianca : TINYINT
+  poster_path : VARCHAR(160)
+}
+
+entity "catalogo_generos" as generos #FBF3E3 {
+  * id : SMALLINT <<PK>>
+  --
+  nome : VARCHAR(60)
+}
+
+entity "catalogo_obra_generos" as og #FBF3E3 {
+  * obra_id : INT <<FK>>
+  * genero_id : SMALLINT <<FK>>
+}
+
+entity "catalogo_paises" as paises #FBF3E3 {
+  * codigo : CHAR(2) <<PK>>
+  --
+  nome : VARCHAR(80)
+}
+
+entity "catalogo_obra_paises" as op #FBF3E3 {
+  * obra_id : INT <<FK>>
+  * pais_codigo : CHAR(2) <<FK>>
+}
+
+entity "catalogo_plataformas" as plat #FBF3E3 {
+  * id : SMALLINT <<PK>>
+  --
+  slug : VARCHAR(40) <<UQ>>
+  nome : VARCHAR(80)
+  preco : DECIMAL
+  ativa : TINYINT(1)
+}
+
+entity "catalogo_obra_plataformas" as opp #FBF3E3 {
+  * obra_id : INT <<FK>>
+  * plataforma_id : SMALLINT <<FK>>
+  --
+  oferta : ENUM
+  regiao : CHAR(2)
+}
+
+entity "catalogo_pessoas" as pessoas #FBF3E3 {
+  * id : INT <<PK>>
+  --
+  tmdb_id : INT <<UQ>>
+  nome : VARCHAR(160)
+}
+
+entity "catalogo_creditos" as creditos #FBF3E3 {
+  * id : BIGINT <<PK>>
+  --
+  obra_id : INT <<FK>>
+  pessoa_id : INT <<FK>>
+  funcao : ENUM
+  ordem : TINYINT
+}
+
+obras ||--o{ og
+generos ||--o{ og
+obras ||--o{ op
+paises ||--o{ op
+obras ||--o{ opp
+plat ||--o{ opp
+obras ||--o{ creditos
+pessoas ||--o{ creditos
+@enduml

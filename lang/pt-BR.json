@@ -586,6 +586,8 @@
     },
     "admin": {
         "title": "Painel PersonaCut",
+        "search": "Buscar no painel",
+        "search_results_for": "Resultados para \"{q}\"",
         "login_title": "Entrar no painel",
         "login_subtitle": "Área restrita para gerenciar o catálogo do PersonaCut.",
         "user": "Usuário",

@@ -127,8 +127,8 @@ require __DIR__ . '/partials/head.php';
             </div>
         </div>
 
-        <div class="pc-table-wrap">
-            <table class="pc-table">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
                 <thead>
                 <tr>
                     <th>Código</th>
@@ -139,7 +139,7 @@ require __DIR__ . '/partials/head.php';
                 </thead>
                 <tbody>
                 <?php if ($ultimos === []): ?>
-                    <tr><td colspan="4" class="pc-table__empty"><?= e(t('admin.no_data')) ?></td></tr>
+                    <tr><td colspan="4" class="text-center text-muted py-3"><?= e(t('admin.no_data')) ?></td></tr>
                 <?php else: ?>
                     <?php foreach ($ultimos as $linha): ?>
                         <tr>
@@ -178,30 +178,6 @@ require __DIR__ . '/partials/head.php';
                 <p><?= e($atalho['texto']) ?></p>
             </div>
         </a>
-    <?php endforeach; ?>
-</div>
-
-<div class="pc-admin__head pc-mt-4" style="margin-bottom:12px">
-    <div>
-        <h2 style="font-size:18px">Próximos módulos</h2>
-        <p class="pc-text-muted" style="font-size:12px">Estrutura pronta no menu, com dados reais entrando nas próximas etapas.</p>
-    </div>
-</div>
-
-<div class="pc-admin__placeholder-grid">
-    <?php foreach ([
-        ['icon' => 'film', 'titulo' => 'Mídia e imagens', 'texto' => 'Biblioteca de pôsteres, logos e imagens de diretores.'],
-        ['icon' => 'lock', 'titulo' => 'Usuários', 'texto' => 'Contas públicas, permissões e histórico de acesso.'],
-        ['icon' => 'clock', 'titulo' => 'Relatórios', 'texto' => 'Exportações, funil do quiz e leitura por período.'],
-    ] as $breve): ?>
-        <div class="pc-admin__placeholder">
-            <span class="pc-stat__icon"><?= icon($breve['icon'], 18) ?></span>
-            <div>
-                <b><?= e($breve['titulo']) ?></b>
-                <small><?= e($breve['texto']) ?></small>
-            </div>
-            <span class="badge bg-label-secondary ms-auto">em breve</span>
-        </div>
     <?php endforeach; ?>
 </div>
 

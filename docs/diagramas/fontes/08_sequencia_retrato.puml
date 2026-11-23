@@ -1,0 +1,38 @@
+@startuml 08_sequencia_retrato
+!include _tema.puml
+title Geração do retrato por IA (opcional)
+
+actor "Visitante" as V
+participant "resultado.php" as R
+participant "api/retrato.php" as API
+participant "RetratoService" as RS
+participant "GroqService" as G
+participant "Retrato (model)" as MR
+database "MySQL" as DB
+
+V -> R : abre o resultado
+R -> DB : SELECT retrato por código
+alt retrato já existe
+  DB --> R : texto + frase salvos
+else primeira geração
+  R --> V : retrato determinístico (fallback)
+  V -> API : POST /api/retrato.php { codigo, csrf }
+  API -> API : valida CSRF + rate limit
+  API -> DB : carrega perfil e narrativa
+  API -> RS : gerar(perfil)
+  RS -> RS : monta prompt + JSON do perfil
+  RS -> G : chat(messages)
+  alt Groq disponível
+    G --> RS : FRASE + TEXTO
+    RS -> RS : limpar() e validar()
+    RS -> MR : salvar(codigo, texto, frase)
+    MR -> DB : INSERT/UPDATE retratos
+    RS --> API : texto + frase
+    API --> V : JSON com retrato
+  else falha, timeout ou limite
+    G --> RS : null
+    RS --> API : null
+    API --> V : mantém o texto determinístico
+  end
+end
+@enduml

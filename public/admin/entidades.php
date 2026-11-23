@@ -307,8 +307,8 @@ require __DIR__ . '/partials/head.php';
     </div>
 </div>
 
-<div class="pc-table-wrap">
-    <table class="pc-table">
+<div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
         <thead>
         <tr>
             <th>Nome</th>
@@ -320,7 +320,7 @@ require __DIR__ . '/partials/head.php';
         </thead>
         <tbody>
         <?php if ($entidades === []): ?>
-            <tr><td colspan="5" class="pc-table__empty"><?= e(t('admin.no_data')) ?></td></tr>
+            <tr><td colspan="5" class="text-center text-muted py-3"><?= e(t('admin.no_data')) ?></td></tr>
         <?php endif; ?>
 
         <?php foreach ($entidades as $entidade): ?>

@@ -1,0 +1,108 @@
+@startuml 11_er_logico_perfil
+!include _tema.puml
+title Modelo lógico — perfil, curadoria e acesso
+hide methods
+hide stereotypes
+skinparam linetype ortho
+
+entity "eixos" as eixos #EADBC6 {
+  * id : TINYINT <<PK>>
+  --
+  ordem : TINYINT <<UQ>>
+  slug : VARCHAR(40) <<UQ>>
+  nome : VARCHAR(60)
+  polo_esq_nome : VARCHAR(60)
+  polo_dir_nome : VARCHAR(60)
+  cor_esq : CHAR(7)
+  cor_dir : CHAR(7)
+}
+
+entity "perguntas" as perguntas #E4EEE9 {
+  * id : SMALLINT <<PK>>
+  --
+  eixo_id : TINYINT <<FK>>
+  texto_key : VARCHAR(80) <<UQ>>
+  texto : VARCHAR(255)
+  direcao : TINYINT
+  peso : TINYINT
+  modo_rapido : TINYINT(1)
+  tmdb_id : INT
+  midia_tipo : ENUM
+  midia_meta : JSON
+}
+
+entity "resultados_usuarios" as resultados #E4EEE9 {
+  * id : BIGINT <<PK>>
+  --
+  codigo_unico : CHAR(8) <<UQ>>
+  modo : ENUM
+  respostas_json : JSON
+  eixo_1..6 : DECIMAL(5,2)
+  arquetipo_id : SMALLINT <<FK>>
+  origem : ENUM
+  ip_hash : CHAR(64)
+}
+
+entity "arquetipos" as arq #F7EBD2 {
+  * id : SMALLINT <<PK>>
+  --
+  eixo_dominante_1 : TINYINT <<FK>>
+  polo_1 : ENUM
+  eixo_1..6 : TINYINT
+  titulo : VARCHAR(120)
+}
+
+entity "retratos" as retratos #EADBC6 {
+  * id : INT <<PK>>
+  --
+  codigo_unico : CHAR(8) <<FK,UQ>>
+  texto : MEDIUMTEXT
+  frase : VARCHAR(280)
+  narrativa_json : JSON
+  modelo : VARCHAR(80)
+}
+
+entity "entidades_match" as ent #F3E8D4 {
+  * id : INT <<PK>>
+  --
+  tipo : ENUM
+  nome : VARCHAR(120)
+  obra_origem : VARCHAR(160)
+  eixo_1..8 : TINYINT
+  vetor_origem : ENUM
+  tmdb_id : INT
+}
+
+entity "entidades_obras" as eobras #F3E8D4 {
+  * id : INT <<PK>>
+  --
+  entidade_id : INT <<FK>>
+  titulo : VARCHAR(160)
+  ano : SMALLINT
+  tmdb_id : INT
+}
+
+entity "usuarios" as usuarios #E4EEE9 {
+  * id : INT <<PK>>
+  --
+  nome : VARCHAR(80)
+  usuario : VARCHAR(40) <<UQ>>
+  senha : VARCHAR(255)
+}
+
+entity "bookmarks" as bookmarks #E4EEE9 {
+  * id : BIGINT <<PK>>
+  --
+  usuario_id : INT <<FK>>
+  tmdb_id : INT
+  status : ENUM
+  titulo : VARCHAR(200)
+}
+
+eixos ||--o{ perguntas
+eixos ||--o{ arq
+arq ||--o{ resultados
+resultados ||--o| retratos
+ent ||--o{ eobras
+usuarios ||--o{ bookmarks
+@enduml

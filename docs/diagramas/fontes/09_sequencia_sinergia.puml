@@ -1,0 +1,21 @@
+@startuml 09_sequencia_sinergia
+!include _tema.puml
+title Comparação entre dois perfis (Sinergia)
+
+actor "Visitante" as V
+participant "sinergia.php" as S
+participant "PerfilController" as P
+participant "MatcherService" as M
+database "MySQL" as DB
+
+V -> S : informa os códigos A e B
+S -> P : comparar(A, B)
+P -> DB : SELECT resultados A e B
+DB --> P : vetores de 6 eixos
+P -> M : comparar(vetorA, vetorB)
+M -> M : compatibilidade + distância média
+M --> P : percentual + veredito
+P -> P : filme da dupla e eixos de maior divergência
+P --> S : view model do casal
+S --> V : radar duplo + compatibilidade + sugestão
+@enduml

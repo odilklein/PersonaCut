@@ -1,0 +1,36 @@
+@startuml 15_implantacao
+!include _tema.puml
+title Implantação — ambiente local e hospedagem compartilhada
+skinparam linetype ortho
+left to right direction
+
+node "Estação de desenvolvimento" as DEV {
+  node "Docker Compose" as COMPOSE {
+    node "personacut-app\nApache 2.4 + PHP 8.2" as APP #E4EEE9 {
+      artifact "public/ (DocumentRoot)" as DOC
+    }
+    database "personacut-db\nMySQL 8.4" as DB #EADBC6
+    node "phpMyAdmin\n:8091" as PMA #F3E8D4
+  }
+  node "Navegador\nhttp://localhost:8090" as NAV #F7EBD2
+}
+
+cloud "TMDB API" as TMDB #FFFFFF
+cloud "Groq API" as GROQ #FFFFFF
+
+node "InfinityFree (opcional)" as IF {
+  node "Apache + PHP 8.x" as IFA #E4EEE9 {
+    artifact "htdocs/ + public/" as IFDOC
+  }
+  database "MariaDB\nutf8mb4_unicode_ci" as IFDB #EADBC6
+}
+
+NAV --> APP : HTTP :8090
+APP --> DB : PDO 3308
+PMA --> DB
+DOC ..> TMDB : sync offline\n(catálogo e imagens)
+DOC ..> GROQ : retrato (opcional)
+IFDOC --> IFDB : PDO
+IFDOC ..> TMDB : imagens via proxy
+IFDOC ..> GROQ : retrato (opcional)
+@enduml

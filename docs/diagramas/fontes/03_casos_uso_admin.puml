@@ -1,0 +1,27 @@
+@startuml 03_casos_uso_admin
+!include _tema.puml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Administrador" as A
+
+rectangle "PersonaCut — painel editorial" {
+  usecase "Autenticar no painel\n(rate limit por IP)" as UC1
+  usecase "Ver o dashboard\nde perfis" as UC2
+  usecase "Gerenciar os 6 eixos" as UC3
+  usecase "Gerenciar perguntas\ne cenas do quiz" as UC4
+  usecase "Gerenciar entidades\ndo matcher" as UC5
+  usecase "Gerenciar arquétipos" as UC6
+  usecase "Gerenciar plataformas\ne preços" as UC7
+  usecase "Sugerir clipes\nda TMDB" as UC8
+}
+
+A --> UC1
+UC1 <.. UC2 : <<include>>
+A --> UC3
+A --> UC4
+UC4 <.. UC8 : <<extend>>
+A --> UC5
+A --> UC6
+A --> UC7
+@enduml

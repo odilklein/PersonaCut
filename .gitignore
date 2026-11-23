@@ -28,3 +28,9 @@ Thumbs.db
 
 # Configuração local do OpenCode (MCP do HexStrike aponta para caminhos da máquina)
 opencode.json
+
+# Documentação da disciplina: páginas de QA geradas pelo build
+docs/saida/qa/
+docs/saida/*.docx
+docs/saida/*.pdf
+docs/saida/toc.json

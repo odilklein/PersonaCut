@@ -1,0 +1,44 @@
+@startuml 13_arquitetura
+!include _tema.puml
+title Arquitetura em camadas do PersonaCut
+skinparam linetype ortho
+top to bottom direction
+
+package "Navegador" {
+  component "Páginas HTML\n(index, quiz, resultado, sinergia)" as HTML #F3E8D4
+  component "JS puro\n(quiz, quickview, storycard, tema)" as JS #F3E8D4
+  component "CSS próprio\n(design system cinema)" as CSS #F3E8D4
+}
+
+package "Apresentação — public/" {
+  component "Páginas PHP" as PAG #E4EEE9
+  component "Endpoints JSON /api/*" as API #E4EEE9
+  component "Painel admin /admin/*" as ADM #E4EEE9
+  component ".htaccess: CSP, métodos, dotfiles" as HT #E4EEE9
+}
+
+package "Aplicação" {
+  component "Controllers\nQuiz, Perfil" as CTRL #F7EBD2
+  component "Services\nLikert, Matcher, Recomendação,\nRanking, Retrato, Mídia" as SRV #F7EBD2
+  component "Models\nPDO + prepared statements" as MOD #F7EBD2
+  component "Core\nDatabase, Session, Csrf,\nRateLimit, Radar, Vetor" as CORE #EADBC6
+}
+
+database "MySQL 8.4\nperfil + catálogo" as DB #EADBC6
+cloud "TMDB" as TMDB #FFFFFF
+cloud "Groq" as GROQ #FFFFFF
+
+HTML --> PAG
+JS --> API
+CSS --> HTML
+PAG --> CTRL
+API --> CTRL
+ADM --> CTRL
+CTRL --> SRV
+SRV --> MOD
+MOD --> CORE
+CORE --> DB
+HT ..> PAG : protege
+SRV ..> GROQ : retrato (opcional)
+MOD ..> TMDB : cache / sync offline
+@enduml

@@ -1,0 +1,47 @@
+' Tema visual dos diagramas do PersonaCut — paleta "cinema analógico".
+' Papel envelhecido, vinho de cartaz, dourado de letreiro e teal.
+skinparam dpi 300
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam ArrowColor #53201C
+skinparam ArrowThickness 1.2
+skinparam actorStyle awesome
+skinparam actorBorderColor #53201C
+skinparam actorBackgroundColor #EADBC6
+skinparam actorFontColor #221812
+skinparam usecaseBorderColor #33524C
+skinparam usecaseBackgroundColor #E4EEE9
+skinparam usecaseFontColor #221812
+skinparam rectangleBorderColor #53201C
+skinparam rectangleBackgroundColor #FAF3E4
+skinparam rectangleFontColor #53201C
+skinparam packageBorderColor #D8C6A8
+skinparam packageBackgroundColor #FAF3E4
+skinparam packageFontColor #221812
+skinparam classBorderColor #6B2B25
+skinparam classBackgroundColor #FAF3E4
+skinparam classFontColor #221812
+skinparam classAttributeFontColor #221812
+skinparam classFontStyle bold
+skinparam componentBorderColor #6B2B25
+skinparam componentBackgroundColor #F3E8D4
+skinparam componentFontColor #221812
+skinparam stateBorderColor #B8863B
+skinparam stateBackgroundColor #F7EBD2
+skinparam stateFontColor #221812
+skinparam noteBackgroundColor #FFF8E1
+skinparam noteBorderColor #D8C6A8
+skinparam databaseBorderColor #6B2B25
+skinparam databaseBackgroundColor #F3E8D4
+skinparam entityBorderColor #6B2B25
+skinparam entityBackgroundColor #FAF3E4
+skinparam entityFontColor #221812
+skinparam sequenceArrowColor #53201C
+skinparam sequenceLifeLineBorderColor #B8863B
+skinparam sequenceParticipantBorderColor #6B2B25
+skinparam sequenceParticipantBackgroundColor #F3E8D4
+skinparam sequenceGroupBackgroundColor #FBF3E3
+skinparam sequenceGroupBorderColor #D8C6A8

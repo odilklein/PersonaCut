@@ -23,7 +23,6 @@ $adminInicial = mb_strtoupper(mb_substr($adminNome !== '' ? $adminNome : 'A', 0,
 $secoesMenu = [
     'Visão geral' => [
         ['arquivo' => '', 'icone' => 'grid', 'rotulo' => t('admin.dashboard')],
-        ['arquivo' => 'resultados.php', 'icone' => 'film', 'rotulo' => 'Resultados', 'breve' => true],
     ],
     'Conteúdo' => [
         ['arquivo' => 'eixos.php', 'icone' => 'compass', 'rotulo' => t('admin.axes')],
@@ -32,12 +31,8 @@ $secoesMenu = [
         ['arquivo' => 'entidades.php', 'icone' => 'users', 'rotulo' => t('admin.entities')],
     ],
     'Catálogo' => [
+        ['arquivo' => 'filmes.php', 'icone' => 'film', 'rotulo' => 'Filmes'],
         ['arquivo' => 'plataformas.php', 'icone' => 'globe', 'rotulo' => t('admin.platforms')],
-        ['arquivo' => 'midia.php', 'icone' => 'film', 'rotulo' => 'Mídia e imagens', 'breve' => true],
-    ],
-    'Sistema' => [
-        ['arquivo' => 'usuarios.php', 'icone' => 'lock', 'rotulo' => 'Usuários', 'breve' => true],
-        ['arquivo' => 'configuracoes.php', 'icone' => 'sparkles', 'rotulo' => 'Configurações', 'breve' => true],
     ],
 ];
 ?>
@@ -77,23 +72,12 @@ $secoesMenu = [
                     <li class="menu-header small"><span class="menu-header-text"><?= e($secao) ?></span></li>
 
                     <?php foreach ($itens as $item): ?>
-                        <?php
-                        $breve = !empty($item['breve']);
-                        $ativo = !$breve && (string) $item['arquivo'] === (string) $adminAtivo;
-                        ?>
-                        <li class="menu-item<?= $ativo ? ' active' : '' ?><?= $breve ? ' disabled' : '' ?>">
-                            <?php if ($breve): ?>
-                                <a class="menu-link" href="javascript:void(0)" aria-disabled="true">
-                                    <span class="menu-icon"><?= icon($item['icone'], 18) ?></span>
-                                    <div><?= e($item['rotulo']) ?></div>
-                                    <span class="badge bg-label-secondary ms-auto">em breve</span>
-                                </a>
-                            <?php else: ?>
-                                <a class="menu-link" href="<?= e(url('admin/' . $item['arquivo'])) ?>">
-                                    <span class="menu-icon"><?= icon($item['icone'], 18) ?></span>
-                                    <div><?= e($item['rotulo']) ?></div>
-                                </a>
-                            <?php endif; ?>
+                        <?php $ativo = (string) $item['arquivo'] === (string) $adminAtivo; ?>
+                        <li class="menu-item<?= $ativo ? ' active' : '' ?>">
+                            <a class="menu-link" href="<?= e(url('admin/' . $item['arquivo'])) ?>">
+                                <span class="menu-icon"><?= icon($item['icone'], 18) ?></span>
+                                <div><?= e($item['rotulo']) ?></div>
+                            </a>
                         </li>
                     <?php endforeach; ?>
                 <?php endforeach; ?>
@@ -135,6 +119,18 @@ $secoesMenu = [
                     </div>
 
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
+                        <li class="nav-item d-flex align-items-center me-2">
+                            <form class="pc-admin__search-form d-flex align-items-center" action="<?= e(url('admin/buscar.php')) ?>" method="get" role="search">
+                                <div class="pc-admin__search">
+                                    <?= icon('search', 15) ?>
+                                    <input type="search" name="q" id="pc-admin-q" value="<?= e($_GET['q'] ?? '') ?>"
+                                           placeholder="<?= e(t('admin.search')) ?>" autocomplete="off" spellcheck="false" inputmode="search">
+                                </div>
+                                <button class="btn btn-sm btn-primary rounded-pill ms-2" type="submit" aria-label="<?= e(t('admin.search')) ?>">
+                                    <?= icon('search', 14) ?>
+                                </button>
+                            </form>
+                        </li>
                         <li class="nav-item d-none d-sm-block me-2">
                             <a class="btn btn-sm btn-label-primary" href="<?= e(url('/')) ?>" target="_blank" rel="noopener">
                                 <?= e(t('admin.view_public')) ?>

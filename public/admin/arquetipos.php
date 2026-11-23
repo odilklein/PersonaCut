@@ -41,7 +41,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $ritual = pc_admin_texto('ritual_cinema');
     $vetor = [];
 
-    for ($i = 1; $i <= 8; $i++) {
+    for ($i = 1; $i <= 6; $i++) {
         $valor = pc_admin_inteiro('eixo_' . $i, 50);
         $vetor[$i] = $valor;
     }
@@ -89,7 +89,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         'ritual_cinema' => $ritual,
     ];
 
-    for ($i = 1; $i <= 8; $i++) {
+    for ($i = 1; $i <= 6; $i++) {
         $dados['eixo_' . $i] = $vetor[$i];
     }
 
@@ -261,8 +261,8 @@ require __DIR__ . '/partials/head.php';
     <?php endif; ?>
 <?php endif; ?>
 
-<div class="pc-table-wrap">
-    <table class="pc-table">
+<div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
         <thead>
         <tr>
             <th>Arquétipo</th>

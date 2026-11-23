@@ -1,0 +1,99 @@
+@startuml 04_classes_dominio
+!include _tema.puml
+skinparam linetype ortho
+hide circle
+skinparam classAttributeIconSize 0
+skinparam nodesep 35
+skinparam ranksep 40
+top to bottom direction
+
+class Eixo #EADBC6 {
+  id : tinyint
+  ordem : tinyint
+  slug : string
+  nome : string
+  polo_esq_nome : string
+  polo_dir_nome : string
+  cor_esq : char(7)
+  cor_dir : char(7)
+}
+
+class Pergunta #E4EEE9 {
+  id : smallint
+  eixo_id : tinyint
+  texto : string
+  direcao : -1 | +1
+  peso : 1 | 2
+  modo_rapido : bool
+  tmdb_id : int
+  midia_tipo : enum
+  midia_meta : json
+}
+
+class Resultado #E4EEE9 {
+  codigo_unico : char(8)
+  modo : enum
+  respostas_json : json
+  eixo_1..6 : decimal
+  origem : real | sintetico
+  ip_hash : char(64)
+}
+
+class Arquetipo #F7EBD2 {
+  id : smallint
+  eixo_dominante_1 : tinyint
+  polo_1 : E | D
+  eixo_1..6 : tinyint
+  titulo : string
+  descricao : text
+}
+
+class EntidadeMatch #F3E8D4 {
+  id : int
+  tipo : personagem | diretor | estudio
+  nome : string
+  obra_origem : string
+  eixo_1..8 : tinyint
+  vetor_origem : enum
+}
+
+class EntidadeObra #F3E8D4 {
+  id : int
+  entidade_id : int
+  titulo : string
+  ano : smallint
+  poster_url : string
+}
+
+class Retrato #EADBC6 {
+  codigo_unico : char(8)
+  texto : mediumtext
+  frase : string
+  narrativa_json : json
+  modelo : string
+}
+
+class Usuario #E4EEE9 {
+  id : int
+  nome : string
+  usuario : string
+  senha : string
+  ultimo_login : datetime
+}
+
+class Bookmark #E4EEE9 {
+  id : bigint
+  usuario_id : int
+  tmdb_id : int
+  tipo : filme | serie
+  status : quero | visto
+}
+
+Eixo "1" -- "0..*" Pergunta : classifica
+Eixo "1" -- "0..*" Arquetipo : domina
+Pergunta "0..*" -- "1" Resultado : compõe
+Arquetipo "1" -- "0..*" Resultado : nomeia
+Resultado "1" -- "0..1" Retrato : gera
+EntidadeMatch "1" -- "0..*" EntidadeObra : possui
+Usuario "1" -- "0..*" Bookmark : mantém
+@enduml
