@@ -23,19 +23,22 @@ try {
 if (!$temCatalogo) {
     require __DIR__ . '/partials/head.php';
     ?>
-    <div class="pc-admin__head">
+    <div class="page-header">
         <div>
-            <h1><?= e(t('admin.platforms')) ?></h1>
-            <p class="pc-text-muted" style="font-size:13px"><?= e(t('admin.platforms_help')) ?></p>
+            <h1><i class="icon-base ti tabler-device-tv"></i><?= e(t('admin.platforms')) ?></h1>
+            <span class="page-subtitle"><?= e(t('admin.platforms_help')) ?></span>
         </div>
     </div>
-
-    <div class="pc-panel">
-        <p><?= e(t('admin.platforms_missing')) ?></p>
-        <a class="pc-btn pc-btn--sm pc-mt-3" href="<?= url('admin/') ?>">
-            <?= icon('arrow-left', 15) ?>
-            <?= e(t('admin.back')) ?>
-        </a>
+    <div class="card">
+        <div class="card-body">
+            <div class="alert alert-warning mb-3" role="alert">
+                <i class="icon-base ti tabler-alert-triangle me-2"></i>
+                <?= e(t('admin.platforms_missing')) ?>
+            </div>
+            <a class="btn btn-outline-primary" href="<?= e(url('admin/')) ?>">
+                <i class="icon-base ti tabler-arrow-left"></i> <?= e(t('admin.back')) ?>
+            </a>
+        </div>
     </div>
     <?php
     require __DIR__ . '/partials/foot.php';
@@ -132,118 +135,140 @@ unset($plataforma);
 require __DIR__ . '/partials/head.php';
 ?>
 
-<div class="pc-admin__head">
+<div class="page-header">
     <div>
-        <h1><?= e(t('admin.platforms')) ?></h1>
-        <p class="pc-text-muted" style="font-size:13px">
-            <?= e(t('admin.platforms_help')) ?>
-        </p>
+        <h1><i class="icon-base ti tabler-device-tv"></i><?= e(t('admin.platforms')) ?></h1>
+        <span class="page-subtitle"><?= e(t('admin.platforms_help')) ?></span>
     </div>
-
-    <div class="pc-admin__head-info">
-        <span class="pc-badge-inline">
+    <div class="page-header-actions">
+        <span class="badge bg-label-primary rounded-pill">
             <?= numero($totalDisponivel, 0) ?> / <?= numero($totalCatalogo, 0) ?> <?= e(t('admin.platforms_coverage')) ?>
         </span>
-
         <?php if ($catalogoAtualizado !== false && $catalogoAtualizado !== null): ?>
-            <span class="pc-badge-inline">
-                <?= e(t('admin.catalog_updated', [
-                    'data' => date('d/m/Y', (int) strtotime((string) $catalogoAtualizado)),
-                ])) ?>
+            <span class="badge bg-label-secondary rounded-pill">
+                <i class="icon-base ti tabler-calendar me-1"></i>
+                <?= e(t('admin.catalog_updated', ['data' => date('d/m/Y', (int) strtotime((string) $catalogoAtualizado))])) ?>
             </span>
         <?php endif; ?>
     </div>
 </div>
 
 <?php if ($plataformas === []): ?>
-    <div class="pc-empty"><?= e(t('admin.no_data')) ?></div>
+    <div class="card">
+        <div class="card-body">
+            <div class="alert alert-info mb-0" role="alert">
+                <i class="icon-base ti tabler-info-circle me-2"></i>
+                <?= e(t('admin.no_data')) ?>
+            </div>
+        </div>
+    </div>
 <?php else: ?>
-    <form class="pc-form pc-mb-3" method="post" action="<?= url('admin/plataformas.php') ?>">
+    <form method="post" action="<?= e(url('admin/plataformas.php')) ?>">
         <?= Csrf::campo() ?>
+        <div class="card">
+            <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div>
+                    <h5 class="card-title mb-1"><?= e(t('admin.platforms')) ?></h5>
+                    <p class="card-subtitle mb-0">Preço editorial e ordem de exibição no ranking</p>
+                </div>
+                <button class="btn btn-primary btn-sm" type="submit">
+                    <i class="icon-base ti tabler-device-floppy me-1"></i>
+                    <?= e(t('admin.save')) ?>
+                </button>
+            </div>
 
-        <div class="table-responsive">
-            <table class="table table-sm align-middle mb-0">
-                <thead>
+            <div class="card-datatable table-responsive">
+                <table class="table table-hover align-middle responsive-card mb-0">
+                    <thead class="border-top">
                     <tr>
                         <th><?= e(t('admin.platforms_name')) ?></th>
                         <th><?= e(t('admin.platforms_price')) ?></th>
                         <th><?= e(t('admin.platforms_checked')) ?></th>
                         <th><?= e(t('admin.platforms_order')) ?></th>
                         <th><?= e(t('admin.platforms_active')) ?></th>
-                        <th><?= e(t('admin.platforms_catalog')) ?></th>
+                        <th class="text-end"><?= e(t('admin.platforms_catalog')) ?></th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     <?php foreach ($plataformas as $plataforma): ?>
-                        <?php $logo = tmdb_logo($plataforma['logo_path'] ?? null); ?>
-                        <tr>
-                            <td>
-                                <input type="hidden" name="id[]" value="<?= (int) $plataforma['id'] ?>">
-
-                                <div class="pc-platform-cell">
+                        <?php
+                        $id = (int) $plataforma['id'];
+                        $logo = tmdb_logo($plataforma['logo_path'] ?? null);
+                        $ativa = (int) $plataforma['ativa'] === 1;
+                        ?>
+                        <tr id="plataforma-<?= $id ?>">
+                            <td data-label="<?= e(t('admin.platforms_name')) ?>">
+                                <input type="hidden" name="id[]" value="<?= $id ?>">
+                                <div class="d-flex align-items-center gap-2 mb-2">
                                     <?php if ($logo !== ''): ?>
-                                        <img src="<?= e($logo) ?>" alt="" width="26" height="26" loading="lazy" decoding="async">
+                                        <img src="<?= e($logo) ?>" alt="" width="28" height="28" class="rounded" loading="lazy" decoding="async">
+                                    <?php else: ?>
+                                        <span class="avatar avatar-sm"><span class="avatar-initial rounded bg-label-primary"><i class="icon-base ti tabler-device-tv"></i></span></span>
                                     <?php endif; ?>
-
-                                    <input class="pc-input pc-input--sm" type="text"
-                                           name="nome[<?= (int) $plataforma['id'] ?>]"
-                                           value="<?= e((string) $plataforma['nome']) ?>" maxlength="80" required>
-
+                                    <input class="form-control form-control-sm" type="text"
+                                           name="nome[<?= $id ?>]" value="<?= e((string) $plataforma['nome']) ?>" maxlength="80" required
+                                           aria-label="<?= e(t('admin.platforms_name')) ?>">
                                     <?php if (!empty($plataforma['url'])): ?>
-                                        <a class="pc-link-arrow" href="<?= e((string) $plataforma['url']) ?>" target="_blank" rel="noopener noreferrer">
-                                            <?= icon('external', 13) ?>
+                                        <a class="btn btn-icon btn-sm btn-text-secondary rounded-pill" href="<?= e((string) $plataforma['url']) ?>" target="_blank" rel="noopener noreferrer" title="Abrir site">
+                                            <i class="icon-base ti tabler-external-link"></i>
                                         </a>
                                     <?php endif; ?>
                                 </div>
-
-                                <input class="pc-input pc-input--sm pc-mt-1" type="url"
-                                       name="url[<?= (int) $plataforma['id'] ?>]"
-                                       value="<?= e((string) ($plataforma['url'] ?? '')) ?>"
-                                       placeholder="https://… (opcional)">
-
-                                <small class="pc-text-muted">TMDB #<?= (int) $plataforma['tmdb_provider_id'] ?></small>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text"><i class="icon-base ti tabler-link"></i></span>
+                                    <input class="form-control form-control-sm" type="url" name="url[<?= $id ?>]"
+                                           value="<?= e((string) ($plataforma['url'] ?? '')) ?>" placeholder="https://… (opcional)"
+                                           aria-label="URL de assinatura">
+                                </div>
+                                <small class="text-body-secondary">TMDB #<?= (int) $plataforma['tmdb_provider_id'] ?></small>
                             </td>
-                            <td>
-                                <input class="pc-input pc-input--sm" type="number" step="0.01" min="0" max="9999"
-                                       name="preco_mensal[<?= (int) $plataforma['id'] ?>]"
-                                       value="<?= $plataforma['preco_mensal'] !== null ? number_format((float) $plataforma['preco_mensal'], 2, '.', '') : '' ?>"
-                                       placeholder="0,00">
+                            <td data-label="<?= e(t('admin.platforms_price')) ?>">
+                                <div class="input-group input-group-sm" style="max-width:130px">
+                                    <span class="input-group-text">R$</span>
+                                    <input class="form-control form-control-sm" type="number" step="0.01" min="0" max="9999"
+                                           name="preco_mensal[<?= $id ?>]"
+                                           value="<?= $plataforma['preco_mensal'] !== null ? number_format((float) $plataforma['preco_mensal'], 2, '.', '') : '' ?>"
+                                           placeholder="0,00" aria-label="Preço mensal">
+                                </div>
                             </td>
-                            <td>
-                                <input class="pc-input pc-input--sm" type="date"
-                                       name="preco_atualizado_em[<?= (int) $plataforma['id'] ?>]"
-                                       value="<?= e((string) ($plataforma['preco_atualizado_em'] ?? '')) ?>">
+                            <td data-label="<?= e(t('admin.platforms_checked')) ?>">
+                                <input class="form-control form-control-sm" type="date"
+                                       name="preco_atualizado_em[<?= $id ?>]"
+                                       value="<?= e((string) ($plataforma['preco_atualizado_em'] ?? '')) ?>"
+                                       aria-label="<?= e(t('admin.platforms_checked')) ?>">
                             </td>
-                            <td>
-                                <input class="pc-input pc-input--sm" type="number" min="0" max="255"
-                                       name="prioridade[<?= (int) $plataforma['id'] ?>]"
-                                       value="<?= (int) $plataforma['prioridade'] ?>">
+                            <td data-label="<?= e(t('admin.platforms_order')) ?>">
+                                <input class="form-control form-control-sm" type="number" min="0" max="255" style="max-width:80px"
+                                       name="prioridade[<?= $id ?>]" value="<?= (int) $plataforma['prioridade'] ?>"
+                                       aria-label="<?= e(t('admin.platforms_order')) ?>">
                             </td>
-                            <td>
-                                <label class="pc-check">
-                                    <input type="checkbox" name="ativa[<?= (int) $plataforma['id'] ?>]" value="1"
-                                        <?= (int) $plataforma['ativa'] === 1 ? 'checked' : '' ?>>
-                                    <span><?= e(t('admin.platforms_active')) ?></span>
+                            <td data-label="<?= e(t('admin.platforms_active')) ?>">
+                                <label class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" name="ativa[<?= $id ?>]" value="1"
+                                        <?= $ativa ? 'checked' : '' ?>>
+                                    <span class="form-check-label badge <?= $ativa ? 'bg-label-success' : 'bg-label-secondary' ?>">
+                                        <?= $ativa ? 'Ativa' : 'Inativa' ?>
+                                    </span>
                                 </label>
                             </td>
-                            <td>
-                                <b class="pc-tabular"><?= numero((int) ($plataforma['total_obras'] ?? 0), 0) ?></b>
+                            <td data-label="<?= e(t('admin.platforms_catalog')) ?>" class="text-end">
+                                <span class="badge bg-label-primary rounded-pill"><?= numero((int) ($plataforma['total_obras'] ?? 0), 0) ?></span>
                             </td>
                         </tr>
                     <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <small class="text-body-secondary"><?= e(t('admin.platforms_note')) ?></small>
+                <button class="btn btn-primary btn-sm" type="submit">
+                    <i class="icon-base ti tabler-device-floppy me-1"></i>
+                    <?= e(t('admin.save')) ?>
+                </button>
+            </div>
         </div>
-
-        <button class="pc-btn pc-btn--sm pc-mt-3" type="submit">
-            <?= icon('check', 15) ?>
-            <?= e(t('admin.save')) ?>
-        </button>
     </form>
-
-    <p class="pc-text-muted" style="font-size:12px;max-width:640px">
-        <?= e(t('admin.platforms_note')) ?>
-    </p>
 <?php endif; ?>
 
 <?php require __DIR__ . '/partials/foot.php'; ?>

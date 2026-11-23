@@ -31,16 +31,23 @@ try {
 if (!$temCatalogo) {
     require __DIR__ . '/partials/head.php';
     ?>
-    <div class="pc-admin__head">
+    <div class="page-header">
         <div>
-            <h1>Filmes e séries</h1>
-            <p class="pc-text-muted" style="font-size:13px">Gerencie os títulos usados nas recomendações e no ranking de plataformas.</p>
+            <h1><i class="icon-base ti tabler-movies"></i>Filmes e séries</h1>
+            <span class="page-subtitle">Gerencie os títulos usados nas recomendações e no ranking de plataformas.</span>
         </div>
     </div>
 
-    <div class="pc-panel">
-        <p>As tabelas do catálogo ainda não foram importadas neste banco. Importe <code>sql/009_catalogo.sql</code> e o snapshot do catálogo para habilitar este CRUD.</p>
-        <a class="pc-btn pc-btn--sm pc-mt-3" href="<?= url('admin/') ?>"><?= icon('arrow-left', 15) ?> <?= e(t('admin.back')) ?></a>
+    <div class="card">
+        <div class="card-body">
+            <div class="alert alert-warning mb-3" role="alert">
+                <i class="icon-base ti tabler-alert-triangle me-2"></i>
+                As tabelas do catálogo ainda não foram importadas neste banco. Importe <code>sql/009_catalogo.sql</code> e o snapshot do catálogo para habilitar este CRUD.
+            </div>
+            <a class="btn btn-outline-primary" href="<?= e(url('admin/')) ?>">
+                <i class="icon-base ti tabler-arrow-left me-1"></i><?= e(t('admin.back')) ?>
+            </a>
+        </div>
     </div>
     <?php
     require __DIR__ . '/partials/foot.php';
@@ -315,231 +322,265 @@ if ($editar === 'novo') {
 require __DIR__ . '/partials/head.php';
 ?>
 
-<div class="pc-admin__head">
+<div class="page-header">
     <div>
-        <h1>Filmes e séries</h1>
-        <p class="pc-text-muted" style="font-size:13px">
-            Cadastre, edite e exclua os títulos do catálogo usados nas recomendações. O ID TMDB deve ser único por tipo.
-        </p>
+        <h1><i class="icon-base ti tabler-movies"></i>Filmes e séries</h1>
+        <span class="page-subtitle">Cadastre, edite e exclua os títulos do catálogo usados nas recomendações. O ID TMDB deve ser único por tipo.</span>
     </div>
-
-    <a class="pc-btn pc-btn--sm" href="<?= e($link(['editar' => 'novo'])) ?>">
-        <?= icon('film', 16) ?> <?= e(t('admin.new')) ?>
-    </a>
+    <div class="page-header-actions">
+        <a class="btn btn-primary" href="<?= e($link(['editar' => 'novo'])) ?>">
+            <i class="icon-base ti tabler-plus"></i> <?= e(t('admin.new')) ?>
+        </a>
+    </div>
 </div>
 
 <?php if ($editando !== null): ?>
-    <form class="pc-form pc-mb-3" method="post" action="<?= url('admin/filmes.php') ?>">
-        <?= Csrf::campo() ?>
-        <input type="hidden" name="acao" value="salvar">
-        <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
-
-        <div class="pc-form__row pc-form__row--3">
-            <div class="pc-field">
-                <label class="pc-label" for="tipo">Tipo</label>
-                <select class="pc-select" id="tipo" name="tipo">
-                    <?php foreach ($tipos as $chave => $rotulo): ?>
-                        <option value="<?= e($chave) ?>" <?= $editando['tipo'] === $chave ? 'selected' : '' ?>>
-                            <?= e($rotulo) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+    <div class="card mb-4">
+        <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <div>
+                <h5 class="card-title mb-1"><?= (int) $editando['id'] > 0 ? 'Editar título' : 'Novo título' ?></h5>
+                <p class="card-subtitle mb-0">Dados do TMDB, metadados e vetor legado do catálogo</p>
             </div>
-
-            <div class="pc-field">
-                <label class="pc-label" for="tmdb_id">ID TMDB</label>
-                <input class="pc-input" id="tmdb_id" name="tmdb_id" type="number" min="1" max="4294967295"
-                       value="<?= e((string) $editando['tmdb_id']) ?>" required>
-            </div>
-
-            <div class="pc-field">
-                <label class="pc-label" for="ano">Ano (opcional)</label>
-                <input class="pc-input" id="ano" name="ano" type="number" min="1800" max="2100"
-                       value="<?= e((string) ($editando['ano'] ?? '')) ?>">
-            </div>
+            <?php if ((int) $editando['id'] > 0): ?>
+                <span class="badge bg-label-primary rounded-pill">#<?= (int) $editando['id'] ?></span>
+            <?php endif; ?>
         </div>
+        <div class="card-body">
+            <form method="post" action="<?= e(url('admin/filmes.php')) ?>">
+                <?= Csrf::campo() ?>
+                <input type="hidden" name="acao" value="salvar">
+                <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
 
-        <div class="pc-form__row">
-            <div class="pc-field">
-                <label class="pc-label" for="titulo">Título</label>
-                <input class="pc-input" id="titulo" name="titulo" type="text" maxlength="200"
-                       value="<?= e((string) $editando['titulo']) ?>" required>
-            </div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label" for="tipo">Tipo</label>
+                        <select class="form-select" id="tipo" name="tipo">
+                            <?php foreach ($tipos as $chave => $rotulo): ?>
+                                <option value="<?= e($chave) ?>" <?= $editando['tipo'] === $chave ? 'selected' : '' ?>>
+                                    <?= e($rotulo) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-            <div class="pc-field">
-                <label class="pc-label" for="titulo_original">Título original (opcional)</label>
-                <input class="pc-input" id="titulo_original" name="titulo_original" type="text" maxlength="200"
-                       value="<?= e((string) ($editando['titulo_original'] ?? '')) ?>">
-            </div>
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="tmdb_id">ID TMDB</label>
+                        <input class="form-control" id="tmdb_id" name="tmdb_id" type="number" min="1" max="4294967295"
+                               value="<?= e((string) $editando['tmdb_id']) ?>" required>
+                    </div>
 
-        <div class="pc-field">
-            <label class="pc-label" for="sinopse">Sinopse (opcional)</label>
-            <textarea class="pc-textarea" id="sinopse" name="sinopse" maxlength="600" style="min-height:80px"><?= e((string) ($editando['sinopse'] ?? '')) ?></textarea>
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="ano">Ano (opcional)</label>
+                        <input class="form-control" id="ano" name="ano" type="number" min="1800" max="2100"
+                               value="<?= e((string) ($editando['ano'] ?? '')) ?>">
+                    </div>
 
-        <div class="pc-form__row pc-form__row--3">
-            <div class="pc-field">
-                <label class="pc-label" for="duracao">Duração em minutos (filmes)</label>
-                <input class="pc-input" id="duracao" name="duracao" type="number" min="1" max="1000"
-                       value="<?= e((string) ($editando['duracao'] ?? '')) ?>">
-            </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="titulo">Título</label>
+                        <input class="form-control" id="titulo" name="titulo" type="text" maxlength="200"
+                               value="<?= e((string) $editando['titulo']) ?>" required>
+                    </div>
 
-            <div class="pc-field">
-                <label class="pc-label" for="temporadas">Temporadas (séries)</label>
-                <input class="pc-input" id="temporadas" name="temporadas" type="number" min="1" max="100"
-                       value="<?= e((string) ($editando['temporadas'] ?? '')) ?>">
-            </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="titulo_original">Título original (opcional)</label>
+                        <input class="form-control" id="titulo_original" name="titulo_original" type="text" maxlength="200"
+                               value="<?= e((string) ($editando['titulo_original'] ?? '')) ?>">
+                    </div>
 
-            <div class="pc-field">
-                <label class="pc-label" for="nota">Nota (0 a 10)</label>
-                <input class="pc-input" id="nota" name="nota" type="number" min="0" max="10" step="0.1"
-                       value="<?= e((string) ($editando['nota'] ?? '')) ?>">
-            </div>
-        </div>
+                    <div class="col-12">
+                        <label class="form-label" for="sinopse">Sinopse (opcional)</label>
+                        <textarea class="form-control" id="sinopse" name="sinopse" maxlength="600" rows="3"><?= e((string) ($editando['sinopse'] ?? '')) ?></textarea>
+                    </div>
 
-        <div class="pc-form__row pc-form__row--3">
-            <div class="pc-field">
-                <label class="pc-label" for="idioma_original">Idioma original (opcional)</label>
-                <input class="pc-input" id="idioma_original" name="idioma_original" type="text" maxlength="5"
-                       value="<?= e((string) ($editando['idioma_original'] ?? '')) ?>" placeholder="pt-BR">
-            </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="duracao">Duração em minutos (filmes)</label>
+                        <input class="form-control" id="duracao" name="duracao" type="number" min="1" max="1000"
+                               value="<?= e((string) ($editando['duracao'] ?? '')) ?>">
+                    </div>
 
-            <div class="pc-field">
-                <label class="pc-label" for="poster_path">Caminho do pôster (opcional)</label>
-                <input class="pc-input" id="poster_path" name="poster_path" type="text" maxlength="160"
-                       value="<?= e((string) ($editando['poster_path'] ?? '')) ?>" placeholder="/abc.jpg">
-            </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="temporadas">Temporadas (séries)</label>
+                        <input class="form-control" id="temporadas" name="temporadas" type="number" min="1" max="100"
+                               value="<?= e((string) ($editando['temporadas'] ?? '')) ?>">
+                    </div>
 
-            <div class="pc-field">
-                <label class="pc-label" for="backdrop_path">Caminho do backdrop (opcional)</label>
-                <input class="pc-input" id="backdrop_path" name="backdrop_path" type="text" maxlength="160"
-                       value="<?= e((string) ($editando['backdrop_path'] ?? '')) ?>" placeholder="/abc.jpg">
-            </div>
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="nota">Nota (0 a 10)</label>
+                        <input class="form-control" id="nota" name="nota" type="number" min="0" max="10" step="0.1"
+                               value="<?= e((string) ($editando['nota'] ?? '')) ?>">
+                    </div>
 
-        <div class="pc-form__row pc-form__row--3">
-            <div class="pc-field">
-                <label class="pc-label" for="confianca">Confiança do vetor (0 a 100)</label>
-                <input class="pc-input" id="confianca" name="confianca" type="number" min="0" max="100"
-                       value="<?= (int) ($editando['confianca'] ?? 0) ?>">
-            </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="idioma_original">Idioma original (opcional)</label>
+                        <input class="form-control" id="idioma_original" name="idioma_original" type="text" maxlength="5"
+                               value="<?= e((string) ($editando['idioma_original'] ?? '')) ?>" placeholder="pt-BR">
+                    </div>
 
-            <div class="pc-field">
-                <span class="pc-label">Disponível no catálogo</span>
-                <input type="hidden" name="ativo" value="0">
-                <label class="pc-checkbox" style="display:flex;align-items:center;gap:8px;margin-top:8px">
-                    <input type="checkbox" name="ativo" value="1" <?= (int) ($editando['ativo'] ?? 1) === 1 ? 'checked' : '' ?>>
-                    Ativo
-                </label>
-            </div>
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="poster_path">Caminho do pôster (opcional)</label>
+                        <input class="form-control" id="poster_path" name="poster_path" type="text" maxlength="160"
+                               value="<?= e((string) ($editando['poster_path'] ?? '')) ?>" placeholder="/abc.jpg">
+                    </div>
 
-        <div class="pc-field">
-            <span class="pc-label">Vetor legado do catálogo (0 = polo esquerdo, 100 = direito)</span>
-        </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="backdrop_path">Caminho do backdrop (opcional)</label>
+                        <input class="form-control" id="backdrop_path" name="backdrop_path" type="text" maxlength="160"
+                               value="<?= e((string) ($editando['backdrop_path'] ?? '')) ?>" placeholder="/abc.jpg">
+                    </div>
 
-        <div class="pc-form__row" style="grid-template-columns: repeat(4, minmax(0,1fr))">
-            <?php foreach ($eixosLegado as $indice => $nome): ?>
-                <?php $numero = $indice + 1; ?>
-                <div class="pc-field">
-                    <label class="pc-label" for="eixo_<?= $numero ?>"><?= e($nome) ?></label>
-                    <input class="pc-input" id="eixo_<?= $numero ?>" name="eixo_<?= $numero ?>" type="number" min="0" max="100"
-                           value="<?= (int) ($editando['eixo_' . $numero] ?? 50) ?>" required>
+                    <div class="col-md-4">
+                        <label class="form-label" for="confianca">Confiança do vetor (0 a 100)</label>
+                        <input class="form-control" id="confianca" name="confianca" type="number" min="0" max="100"
+                               value="<?= (int) ($editando['confianca'] ?? 0) ?>">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" for="ativo">Disponível no catálogo</label>
+                        <input type="hidden" name="ativo" value="0">
+                        <div class="form-check form-switch my-2">
+                            <input class="form-check-input" type="checkbox" id="ativo" name="ativo" value="1" <?= (int) ($editando['ativo'] ?? 1) === 1 ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="ativo">Ativo</label>
+                        </div>
+                    </div>
                 </div>
+
+                <fieldset class="mt-4">
+                    <legend class="h6 text-heading mb-1">
+                        Vetor legado do catálogo
+                        <small class="text-body-secondary fw-normal">(0 = polo esquerdo, 100 = direito)</small>
+                    </legend>
+                    <div class="row g-3">
+                        <?php foreach ($eixosLegado as $indice => $nome): ?>
+                            <?php $numero = $indice + 1; ?>
+                            <div class="col-6 col-md-3">
+                                <label class="form-label" for="eixo_<?= $numero ?>"><?= e($nome) ?></label>
+                                <input class="form-control" id="eixo_<?= $numero ?>" name="eixo_<?= $numero ?>" type="number" min="0" max="100"
+                                       value="<?= (int) ($editando['eixo_' . $numero] ?? 50) ?>" required>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </fieldset>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="icon-base ti tabler-device-floppy me-1"></i><?= e(t('admin.save')) ?>
+                    </button>
+                    <a class="btn btn-outline-secondary" href="<?= e($link()) ?>">
+                        <i class="icon-base ti tabler-arrow-left me-1"></i><?= e(t('admin.back')) ?>
+                    </a>
+
+                    <?php if ((int) $editando['id'] > 0): ?>
+                        <button class="btn btn-outline-danger ms-auto" type="submit" form="form-excluir">
+                            <i class="icon-base ti tabler-trash me-1"></i><?= e(t('admin.delete')) ?>
+                        </button>
+                    <?php endif; ?>
+                </div>
+            </form>
+
+            <?php if ((int) $editando['id'] > 0): ?>
+                <form id="form-excluir" method="post" action="<?= e(url('admin/filmes.php')) ?>" data-confirm="<?= e(t('admin.confirm_delete')) ?>">
+                    <?= Csrf::campo() ?>
+                    <input type="hidden" name="acao" value="excluir">
+                    <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
+                </form>
+            <?php endif; ?>
+        </div>
+    </div>
+<?php endif; ?>
+
+<div class="card">
+    <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex flex-wrap gap-1">
+            <a class="btn btn-sm <?= $filtroTipo === '' ? 'btn-primary' : 'btn-outline-secondary' ?>" href="<?= e($link()) ?>">Todos</a>
+            <?php foreach ($tipos as $chave => $rotulo): ?>
+                <a class="btn btn-sm <?= $filtroTipo === $chave ? 'btn-primary' : 'btn-outline-secondary' ?>" href="<?= e($link(['tipo' => $chave])) ?>">
+                    <?= e($rotulo) ?>
+                </a>
             <?php endforeach; ?>
         </div>
 
-        <div class="pc-form__actions">
-            <button class="pc-btn" type="submit"><?= e(t('admin.save')) ?></button>
-            <a class="pc-btn pc-btn--ghost" href="<?= e($link()) ?>"><?= e(t('admin.back')) ?></a>
-
-            <?php if ((int) $editando['id'] > 0): ?>
-                <button class="pc-btn pc-btn--light" type="submit" form="form-excluir"><?= e(t('admin.delete')) ?></button>
+        <form class="d-flex flex-wrap gap-2" method="get" action="<?= e(url('admin/filmes.php')) ?>">
+            <?php if ($filtroTipo !== ''): ?>
+                <input type="hidden" name="tipo" value="<?= e($filtroTipo) ?>">
             <?php endif; ?>
-        </div>
-    </form>
-
-    <?php if ((int) $editando['id'] > 0): ?>
-        <form id="form-excluir" method="post" action="<?= url('admin/filmes.php') ?>" data-confirm="<?= e(t('admin.confirm_delete')) ?>">
-            <?= Csrf::campo() ?>
-            <input type="hidden" name="acao" value="excluir">
-            <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
+            <div class="input-group input-group-sm" style="width:min(320px,100%)">
+                <span class="input-group-text"><i class="icon-base ti tabler-search"></i></span>
+                <input class="form-control" name="q" type="search" value="<?= e($busca) ?>" placeholder="Buscar título ou ID TMDB" aria-label="Buscar título ou ID TMDB">
+            </div>
+            <button class="btn btn-sm btn-primary" type="submit">
+                <i class="icon-base ti tabler-search me-1"></i> Buscar
+            </button>
         </form>
-    <?php endif; ?>
-<?php endif; ?>
-
-<div class="pc-admin__head" style="margin-bottom:12px">
-    <div class="pc-admin__actions" style="margin-left:0">
-        <a class="pc-chip <?= $filtroTipo === '' ? 'pc-chip--green' : '' ?>" href="<?= e($link()) ?>">Todos</a>
-        <?php foreach ($tipos as $chave => $rotulo): ?>
-            <a class="pc-chip <?= $filtroTipo === $chave ? 'pc-chip--green' : '' ?>" href="<?= e($link(['tipo' => $chave])) ?>">
-                <?= e($rotulo) ?>
-            </a>
-        <?php endforeach; ?>
     </div>
 
-    <form class="pc-admin__actions" method="get" action="<?= url('admin/filmes.php') ?>">
-        <?php if ($filtroTipo !== ''): ?>
-            <input type="hidden" name="tipo" value="<?= e($filtroTipo) ?>">
-        <?php endif; ?>
-        <input class="pc-input" name="q" type="search" value="<?= e($busca) ?>" placeholder="Buscar título ou ID TMDB" style="min-width:240px">
-        <button class="pc-btn pc-btn--sm" type="submit">Buscar</button>
-    </form>
-</div>
+    <h5 class="card-header text-md-start text-center border-bottom">
+        <?= numero($total, 0) ?> <?= $total === 1 ? 'título' : 'títulos' ?>
+    </h5>
 
-<div class="table-responsive">
-    <table class="table table-sm align-middle mb-0">
-        <thead>
-        <tr>
-            <th>Título</th>
-            <th>Tipo</th>
-            <th>TMDB</th>
-            <th>Ano</th>
-            <th>Nota</th>
-            <th>Status</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php if ($obras === []): ?>
-            <tr><td colspan="7" class="text-center text-muted py-3"><?= e(t('admin.no_data')) ?></td></tr>
-        <?php endif; ?>
-
-        <?php foreach ($obras as $obra): ?>
+    <div class="card-datatable table-responsive">
+        <table class="table table-hover align-middle responsive-card mb-0">
+            <thead class="border-top">
             <tr>
-                <td>
-                    <strong><?= e($obra['titulo']) ?></strong>
-                    <?php if (!empty($obra['titulo_original']) && $obra['titulo_original'] !== $obra['titulo']): ?>
-                        <div class="pc-text-muted" style="font-size:11px"><?= e($obra['titulo_original']) ?></div>
-                    <?php endif; ?>
-                </td>
-                <td><?= e($tipos[$obra['tipo']] ?? $obra['tipo']) ?></td>
-                <td style="font-family:var(--pc-mono);font-size:11px"><?= (int) $obra['tmdb_id'] ?></td>
-                <td><?= $obra['ano'] !== null ? (int) $obra['ano'] : '—' ?></td>
-                <td><?= $obra['nota'] !== null ? e(number_format((float) $obra['nota'], 1, ',', '.')) : '—' ?></td>
-                <td>
-                    <span class="pc-badge-mini"><?= (int) $obra['ativo'] === 1 ? 'ativo' : 'inativo' ?></span>
-                </td>
-                <td><a href="<?= e($link(['editar' => $obra['id']])) ?>"><?= e(t('admin.edit')) ?></a></td>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>TMDB</th>
+                <th>Ano</th>
+                <th>Nota</th>
+                <th>Status</th>
+                <th class="text-end">Ações</th>
             </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+            <?php if ($obras === []): ?>
+                <tr class="row-empty"><td colspan="7" class="text-center text-body-secondary py-5"><?= e(t('admin.no_data')) ?></td></tr>
+            <?php endif; ?>
 
-<?php if ($paginas > 1): ?>
-    <div class="pc-admin__head" style="margin-bottom:12px">
-        <span class="pc-text-muted" style="font-size:12px">Página <?= $pagina ?> de <?= $paginas ?> · <?= $total ?> títulos</span>
-        <div class="pc-admin__actions">
-            <?php if ($pagina > 1): ?>
-                <a class="pc-btn pc-btn--sm pc-btn--ghost" href="<?= e($link(['pagina' => $pagina - 1])) ?>">Anterior</a>
-            <?php endif; ?>
-            <?php if ($pagina < $paginas): ?>
-                <a class="pc-btn pc-btn--sm pc-btn--ghost" href="<?= e($link(['pagina' => $pagina + 1])) ?>">Próxima</a>
-            <?php endif; ?>
-        </div>
+            <?php foreach ($obras as $obra): ?>
+                <tr>
+                    <td data-label="Título">
+                        <span class="text-heading fw-medium"><?= e($obra['titulo']) ?></span>
+                        <?php if (!empty($obra['titulo_original']) && $obra['titulo_original'] !== $obra['titulo']): ?>
+                            <small class="text-body-secondary d-block"><?= e($obra['titulo_original']) ?></small>
+                        <?php endif; ?>
+                    </td>
+                    <td data-label="Tipo"><span class="badge bg-label-secondary rounded-pill"><?= e($tipos[$obra['tipo']] ?? $obra['tipo']) ?></span></td>
+                    <td data-label="TMDB"><small class="font-monospace text-body-secondary"><?= (int) $obra['tmdb_id'] ?></small></td>
+                    <td data-label="Ano"><?= $obra['ano'] !== null ? (int) $obra['ano'] : '—' ?></td>
+                    <td data-label="Nota"><?= $obra['nota'] !== null ? e(number_format((float) $obra['nota'], 1, ',', '.')) : '—' ?></td>
+                    <td data-label="Status">
+                        <span class="badge <?= (int) $obra['ativo'] === 1 ? 'bg-label-success' : 'bg-label-secondary' ?> rounded-pill">
+                            <?= (int) $obra['ativo'] === 1 ? 'ativo' : 'inativo' ?>
+                        </span>
+                    </td>
+                    <td data-label="Ações" class="text-end">
+                        <a class="btn btn-sm btn-icon btn-text-secondary rounded-pill" href="<?= e($link(['editar' => $obra['id']])) ?>" title="<?= e(t('admin.edit')) ?>">
+                            <i class="icon-base ti tabler-pencil"></i>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
-<?php endif; ?>
+
+    <?php if ($paginas > 1): ?>
+        <div class="card-footer d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <small class="text-body-secondary">Página <?= $pagina ?> de <?= $paginas ?> · <?= numero($total, 0) ?> títulos</small>
+            <nav aria-label="Paginação">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item <?= $pagina <= 1 ? 'disabled' : '' ?>">
+                        <a class="page-link" href="<?= e($link(['pagina' => max(1, $pagina - 1)])) ?>">Anterior</a>
+                    </li>
+                    <li class="page-item active">
+                        <span class="page-link"><?= $pagina ?></span>
+                    </li>
+                    <li class="page-item <?= $pagina >= $paginas ? 'disabled' : '' ?>">
+                        <a class="page-link" href="<?= e($link(['pagina' => min($paginas, $pagina + 1)])) ?>">Próxima</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    <?php endif; ?>
+</div>
 
 <?php require __DIR__ . '/partials/foot.php'; ?>

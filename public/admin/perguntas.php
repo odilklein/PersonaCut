@@ -314,270 +314,306 @@ if ($editar === 'novo') {
 require __DIR__ . '/partials/head.php';
 ?>
 
-<div class="pc-admin__head">
+<div class="page-header">
     <div>
-        <h1><?= e(t('admin.questions')) ?></h1>
-        <p class="pc-text-muted" style="font-size:13px">
+        <h1><i class="icon-base ti tabler-list"></i><?= e(t('admin.questions')) ?></h1>
+        <span class="page-subtitle">
             <?= count($perguntas) ?> perguntas ·
             <?= count(array_filter($perguntas, static fn (array $p): bool => (int) $p['modo_rapido'] === 1)) ?> no núcleo ·
             rápido <?= \Models\Pergunta::MODOS['rapido'] ?> · completo <?= \Models\Pergunta::MODOS['completo'] ?> · extremo <?= \Models\Pergunta::MODOS['extremo'] ?>
-        </p>
+        </span>
     </div>
-
-    <a class="pc-btn pc-btn--sm" href="<?= url('admin/perguntas.php', ['editar' => 'novo']) ?>">
-        <?= icon('list', 16) ?> <?= e(t('admin.new')) ?>
-    </a>
+    <div class="page-header-actions">
+        <a class="btn btn-primary" href="<?= e(url('admin/perguntas.php', ['editar' => 'novo'])) ?>">
+            <i class="icon-base ti tabler-plus"></i> <?= e(t('admin.new')) ?>
+        </a>
+    </div>
 </div>
 
 <?php if ($editando !== null): ?>
-    <form class="pc-form pc-mb-3" method="post" action="<?= url('admin/perguntas.php', ['editar' => (int) $editando['id'] > 0 ? (int) $editando['id'] : 'novo']) ?>">
-        <?= Csrf::campo() ?>
-        <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
-
-        <div class="pc-form__row pc-form__row--3">
-            <div class="pc-field">
-                <label class="pc-label" for="eixo_id">Eixo</label>
-                <select class="pc-select" id="eixo_id" name="eixo_id">
-                    <?php foreach ($eixos as $eixo): ?>
-                        <option value="<?= (int) $eixo['id'] ?>" <?= (int) $eixo['id'] === (int) $editando['eixo_id'] ? 'selected' : '' ?>>
-                            <?= e($eixo['nome']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+    <div class="card mb-4">
+        <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <div>
+                <h5 class="card-title mb-1"><?= (int) $editando['id'] > 0 ? 'Editar pergunta' : 'Nova pergunta' ?></h5>
+                <p class="card-subtitle mb-0">Afirmação, direção do eixo, peso e cena ilustrativa</p>
             </div>
-
-            <div class="pc-field">
-                <label class="pc-label" for="direcao">Direção</label>
-                <select class="pc-select" id="direcao" name="direcao">
-                    <option value="1" <?= (int) $editando['direcao'] === 1 ? 'selected' : '' ?>>Concordar empurra para o polo direito</option>
-                    <option value="-1" <?= (int) $editando['direcao'] === -1 ? 'selected' : '' ?>>Concordar empurra para o polo esquerdo</option>
-                </select>
-            </div>
-
-            <div class="pc-field">
-                <label class="pc-label" for="peso">Peso</label>
-                <select class="pc-select" id="peso" name="peso">
-                    <option value="2" <?= (int) $editando['peso'] === 2 ? 'selected' : '' ?>>2 — define o eixo</option>
-                    <option value="1" <?= (int) $editando['peso'] === 1 ? 'selected' : '' ?>>1 — nuance</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="pc-field">
-            <label class="pc-label" for="texto">Afirmação</label>
-            <textarea class="pc-textarea" id="texto" name="texto" maxlength="255" required><?= e($editando['texto']) ?></textarea>
-        </div>
-
-        <?php
-        $midiaMeta = is_array($editando['midia_meta'] ?? null) ? $editando['midia_meta'] : [];
-        $midiaLegenda = (string) ($midiaMeta['legenda'] ?? '');
-        $midiaAno = (int) ($midiaMeta['ano'] ?? 0);
-        $midiaStart = (int) ($midiaMeta['start'] ?? 0);
-        $midiaEnd = (int) ($midiaMeta['end'] ?? 0);
-        ?>
-        <fieldset class="pc-field" style="border:1px solid var(--pc-line);border-radius:4px;padding:14px 16px 4px;margin:0 0 14px">
-            <legend class="pc-label" style="padding:0 6px">Cena ilustrativa (opcional)</legend>
-
-            <div class="pc-form__row pc-form__row--3">
-                <div class="pc-field">
-                    <label class="pc-label" for="midia_tipo">Tipo de mídia</label>
-                    <select class="pc-select" id="midia_tipo" name="midia_tipo">
-                        <option value="" <?= in_array($editando['midia_tipo'] ?? null, [null, ''], true) ? 'selected' : '' ?>>Sem cena</option>
-                        <option value="imagem" <?= ($editando['midia_tipo'] ?? '') === 'imagem' ? 'selected' : '' ?>>Imagem (TMDB ou URL)</option>
-                        <option value="gif" <?= ($editando['midia_tipo'] ?? '') === 'gif' ? 'selected' : '' ?>>GIF (GIPHY ou outro CDN)</option>
-                        <option value="video_yt" <?= ($editando['midia_tipo'] ?? '') === 'video_yt' ? 'selected' : '' ?>>Vídeo do YouTube</option>
-                    </select>
-                </div>
-
-                <div class="pc-field">
-                    <label class="pc-label" for="midia_url_ou_id">Caminho TMDB, URL ou ID do YouTube</label>
-                    <input class="pc-input" id="midia_url_ou_id" name="midia_url_ou_id" type="text" maxlength="255"
-                           value="<?= e((string) ($editando['midia_url_ou_id'] ?? '')) ?>"
-                           placeholder="/8K9qHeM6G6QjQN0C5XKFGvK5lzM.jpg ou dQw4w9WgXcQ">
-                </div>
-
-                <div class="pc-field">
-                    <label class="pc-label" for="tmdb_id">TMDB ID do filme</label>
-                    <input class="pc-input" id="tmdb_id" name="tmdb_id" type="number" min="1" max="99999999"
-                           value="<?= (int) ($editando['tmdb_id'] ?? 0) > 0 ? (int) $editando['tmdb_id'] : '' ?>" placeholder="680">
-                </div>
-            </div>
-
-            <div class="pc-form__row pc-form__row--3">
-                <div class="pc-field">
-                    <label class="pc-label" for="midia_legenda">Legenda na cena</label>
-                    <input class="pc-input" id="midia_legenda" name="midia_legenda" type="text" maxlength="120"
-                           value="<?= e($midiaLegenda) ?>" placeholder="Pulp Fiction (1994)">
-                </div>
-
-                <div class="pc-field">
-                    <label class="pc-label" for="midia_ano">Ano do filme</label>
-                    <input class="pc-input" id="midia_ano" name="midia_ano" type="number" min="1888" max="2100"
-                           value="<?= $midiaAno > 0 ? $midiaAno : '' ?>" placeholder="1994">
-                </div>
-            </div>
-
-            <div class="pc-form__row pc-form__row--3">
-                <div class="pc-field">
-                    <label class="pc-label" for="midia_start">Início do clipe (s)</label>
-                    <input class="pc-input" id="midia_start" name="midia_start" type="number" min="0" max="86399"
-                           value="<?= $midiaStart > 0 ? $midiaStart : '' ?>" placeholder="0">
-                </div>
-
-                <div class="pc-field">
-                    <label class="pc-label" for="midia_end">Fim do clipe (s)</label>
-                    <input class="pc-input" id="midia_end" name="midia_end" type="number" min="0" max="86399"
-                           value="<?= $midiaEnd > 0 ? $midiaEnd : '' ?>" placeholder="12">
-                </div>
-            </div>
-
-            <p class="pc-text-muted" style="font-size:12px;margin:0 0 10px">
-                Imagens: caminho do backdrop da TMDB. O TMDB ID é usado para sugerir clipes oficiais do YouTube;
-                início/fim só valem para vídeos. Salve a pergunta antes de aplicar uma sugestão.
-            </p>
-        </fieldset>
-
-        <div class="pc-form__row pc-form__row--3">
-            <div class="pc-field">
-                <label class="pc-label" for="texto_key">Chave de tradução (opcional)</label>
-                <input class="pc-input" id="texto_key" name="texto_key" type="text" value="<?= e($editando['texto_key']) ?>" placeholder="pergunta.estetica.05">
-            </div>
-
-            <div class="pc-field">
-                <label class="pc-label" for="ordem">Ordem</label>
-                <input class="pc-input" id="ordem" name="ordem" type="number" min="0" max="999" value="<?= (int) $editando['ordem'] ?>">
-            </div>
-
-            <div class="pc-field">
-                <label class="pc-label" for="modo_rapido">Núcleo do eixo</label>
-                <label class="pc-switch" style="height:44px">
-                    <input type="checkbox" id="modo_rapido" name="modo_rapido" value="1" <?= (int) $editando['modo_rapido'] === 1 ? 'checked' : '' ?>>
-                    <span class="pc-switch__track" aria-hidden="true"></span>
-                    Uma das duas primeiras do eixo
-                </label>
-                <small class="pc-text-muted" style="font-size:11px;line-height:1.4;display:block;margin-top:6px">
-                    O modo é definido pela ordem: as 4 primeiras de cada eixo entram no rápido, as 8 primeiras no completo, e todas as 30 no extremo.
-                </small>
-            </div>
-        </div>
-
-        <div class="pc-form__actions">
-            <button class="pc-btn" type="submit" name="acao" value="salvar"><?= e(t('admin.save')) ?></button>
-            <a class="pc-btn pc-btn--ghost" href="<?= url('admin/perguntas.php') ?>"><?= e(t('admin.back')) ?></a>
-
             <?php if ((int) $editando['id'] > 0): ?>
-                <button class="pc-btn pc-btn--ghost" type="submit" name="acao" value="sugerir" formnovalidate>
-                    <?= icon('play', 15) ?> Sugerir clipes da TMDB
-                </button>
-                <button class="pc-btn pc-btn--light" type="submit" form="form-excluir"><?= e(t('admin.delete')) ?></button>
+                <span class="badge bg-label-primary rounded-pill">#<?= (int) $editando['id'] ?></span>
             <?php endif; ?>
         </div>
-    </form>
+        <div class="card-body">
+            <form method="post" action="<?= e(url('admin/perguntas.php', ['editar' => (int) $editando['id'] > 0 ? (int) $editando['id'] : 'novo'])) ?>">
+                <?= Csrf::campo() ?>
+                <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
 
-    <?php if ($sugestoesErro !== null): ?>
-        <div class="pc-alert pc-alert--erro pc-mb-3" role="alert"><?= e($sugestoesErro) ?></div>
-    <?php endif; ?>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label" for="eixo_id">Eixo</label>
+                        <select class="form-select" id="eixo_id" name="eixo_id">
+                            <?php foreach ($eixos as $eixo): ?>
+                                <option value="<?= (int) $eixo['id'] ?>" <?= (int) $eixo['id'] === (int) $editando['eixo_id'] ? 'selected' : '' ?>>
+                                    <?= e($eixo['nome']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-    <?php if ($sugestoes !== []): ?>
-        <section class="pc-admin__suggestions">
-            <div class="pc-admin__head" style="margin-bottom:12px">
-                <div>
-                    <h2 style="font-size:18px;margin:0">Sugestões de clipes oficiais</h2>
-                    <p class="pc-text-muted" style="font-size:12px;margin:4px 0 0">
-                        Clipes de cena da TMDB ordenados por afinidade com a pergunta.
-                        “Usar este clipe” grava o vídeo e mantém legenda/ano atuais.
-                    </p>
+                    <div class="col-md-5">
+                        <label class="form-label" for="direcao">Direção</label>
+                        <select class="form-select" id="direcao" name="direcao">
+                            <option value="1" <?= (int) $editando['direcao'] === 1 ? 'selected' : '' ?>>Concordar empurra para o polo direito</option>
+                            <option value="-1" <?= (int) $editando['direcao'] === -1 ? 'selected' : '' ?>>Concordar empurra para o polo esquerdo</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label" for="peso">Peso</label>
+                        <select class="form-select" id="peso" name="peso">
+                            <option value="2" <?= (int) $editando['peso'] === 2 ? 'selected' : '' ?>>2 — define o eixo</option>
+                            <option value="1" <?= (int) $editando['peso'] === 1 ? 'selected' : '' ?>>1 — nuance</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label" for="texto">Afirmação</label>
+                        <textarea class="form-control" id="texto" name="texto" maxlength="255" rows="2" required><?= e($editando['texto']) ?></textarea>
+                    </div>
                 </div>
-            </div>
 
-            <div class="pc-suggest-grid">
-                <?php foreach ($sugestoes as $sugestao): ?>
-                    <article class="pc-suggest<?= !empty($sugestao['atual']) ? ' is-current' : '' ?>">
-                        <img src="https://i.ytimg.com/vi/<?= e((string) $sugestao['key']) ?>/hqdefault.jpg"
-                             alt="" loading="lazy" width="320" height="180">
-                        <div class="pc-suggest__body">
-                            <h3><?= e((string) $sugestao['nome']) ?></h3>
-                            <p>
-                                <span class="pc-badge-mini"><?= !empty($sugestao['aprovado']) ? 'recomendado' : 'abaixo do limiar' ?></span>
-                                <span class="pc-text-muted">score <?= numero((float) $sugestao['score'], 1) ?></span>
-                                <?php if (!empty($sugestao['atual'])): ?>
-                                    <span class="pc-text-muted">· atual</span>
-                                <?php endif; ?>
-                            </p>
-                            <form method="post" action="<?= url('admin/perguntas.php', ['editar' => (int) $editando['id']]) ?>">
-                                <?= Csrf::campo() ?>
-                                <input type="hidden" name="acao" value="usar_clipe">
-                                <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
-                                <input type="hidden" name="video_key" value="<?= e((string) $sugestao['key']) ?>">
-                                <input type="hidden" name="video_nome" value="<?= e((string) $sugestao['nome']) ?>">
-                                <input type="hidden" name="video_idioma" value="<?= e((string) ($sugestao['idioma'] ?? '')) ?>">
-                                <input type="hidden" name="video_score" value="<?= number_format((float) $sugestao['score'], 1, '.', '') ?>">
-                                <input type="hidden" name="legenda" value="<?= e((string) ($sugestao['legenda'] ?? '')) ?>">
-                                <input type="hidden" name="ano" value="<?= (int) ($sugestao['ano'] ?? 0) ?>">
-                                <button class="pc-btn pc-btn--sm" type="submit">Usar este clipe</button>
-                            </form>
+                <?php
+                $midiaMeta = is_array($editando['midia_meta'] ?? null) ? $editando['midia_meta'] : [];
+                $midiaLegenda = (string) ($midiaMeta['legenda'] ?? '');
+                $midiaAno = (int) ($midiaMeta['ano'] ?? 0);
+                $midiaStart = (int) ($midiaMeta['start'] ?? 0);
+                $midiaEnd = (int) ($midiaMeta['end'] ?? 0);
+                ?>
+                <fieldset class="mt-4 mb-4">
+                    <legend class="h6 text-heading mb-3">Cena ilustrativa <small class="text-body-secondary fw-normal">(opcional)</small></legend>
+
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label" for="midia_tipo">Tipo de mídia</label>
+                            <select class="form-select" id="midia_tipo" name="midia_tipo">
+                                <option value="" <?= in_array($editando['midia_tipo'] ?? null, [null, ''], true) ? 'selected' : '' ?>>Sem cena</option>
+                                <option value="imagem" <?= ($editando['midia_tipo'] ?? '') === 'imagem' ? 'selected' : '' ?>>Imagem (TMDB ou URL)</option>
+                                <option value="gif" <?= ($editando['midia_tipo'] ?? '') === 'gif' ? 'selected' : '' ?>>GIF (GIPHY ou outro CDN)</option>
+                                <option value="video_yt" <?= ($editando['midia_tipo'] ?? '') === 'video_yt' ? 'selected' : '' ?>>Vídeo do YouTube</option>
+                            </select>
                         </div>
-                    </article>
-                <?php endforeach; ?>
-            </div>
-        </section>
-    <?php endif; ?>
 
-    <?php if ((int) $editando['id'] > 0): ?>
-        <form id="form-excluir" method="post" action="<?= url('admin/perguntas.php') ?>" data-confirm="<?= e(t('admin.confirm_delete')) ?>">
-            <?= Csrf::campo() ?>
-            <input type="hidden" name="acao" value="excluir">
-            <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
-        </form>
-    <?php endif; ?>
+                        <div class="col-md-5">
+                            <label class="form-label" for="midia_url_ou_id">Caminho TMDB, URL ou ID do YouTube</label>
+                            <input class="form-control" id="midia_url_ou_id" name="midia_url_ou_id" type="text" maxlength="255"
+                                   value="<?= e((string) ($editando['midia_url_ou_id'] ?? '')) ?>"
+                                   placeholder="/8K9qHeM6G6QjQN0C5XKFGvK5lzM.jpg ou dQw4w9WgXcQ">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label" for="tmdb_id">TMDB ID do filme</label>
+                            <input class="form-control" id="tmdb_id" name="tmdb_id" type="number" min="1" max="99999999"
+                                   value="<?= (int) ($editando['tmdb_id'] ?? 0) > 0 ? (int) $editando['tmdb_id'] : '' ?>" placeholder="680">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label" for="midia_legenda">Legenda na cena</label>
+                            <input class="form-control" id="midia_legenda" name="midia_legenda" type="text" maxlength="120"
+                                   value="<?= e($midiaLegenda) ?>" placeholder="Pulp Fiction (1994)">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label" for="midia_ano">Ano do filme</label>
+                            <input class="form-control" id="midia_ano" name="midia_ano" type="number" min="1888" max="2100"
+                                   value="<?= $midiaAno > 0 ? $midiaAno : '' ?>" placeholder="1994">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label" for="midia_start">Início do clipe (s)</label>
+                            <input class="form-control" id="midia_start" name="midia_start" type="number" min="0" max="86399"
+                                   value="<?= $midiaStart > 0 ? $midiaStart : '' ?>" placeholder="0">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label" for="midia_end">Fim do clipe (s)</label>
+                            <input class="form-control" id="midia_end" name="midia_end" type="number" min="0" max="86399"
+                                   value="<?= $midiaEnd > 0 ? $midiaEnd : '' ?>" placeholder="12">
+                        </div>
+
+                        <div class="col-12">
+                            <p class="alert alert-info py-2 px-3 mb-0 small" role="note">
+                                <i class="icon-base ti tabler-info-circle me-2"></i>
+                                Imagens: caminho do backdrop da TMDB. O TMDB ID é usado para sugerir clipes oficiais do YouTube;
+                                início/fim só valem para vídeos. Salve a pergunta antes de aplicar uma sugestão.
+                            </p>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label" for="texto_key">Chave de tradução (opcional)</label>
+                        <input class="form-control" id="texto_key" name="texto_key" type="text" value="<?= e($editando['texto_key']) ?>" placeholder="pergunta.estetica.05">
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label" for="ordem">Ordem</label>
+                        <input class="form-control" id="ordem" name="ordem" type="number" min="0" max="999" value="<?= (int) $editando['ordem'] ?>">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" for="modo_rapido">Núcleo do eixo</label>
+                        <div class="form-check form-switch my-2">
+                            <input class="form-check-input" type="checkbox" id="modo_rapido" name="modo_rapido" value="1" <?= (int) $editando['modo_rapido'] === 1 ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="modo_rapido">Uma das duas primeiras do eixo</label>
+                        </div>
+                        <small class="text-body-secondary d-block">
+                            O modo é definido pela ordem: as 4 primeiras de cada eixo entram no rápido, as 8 primeiras no completo, e todas as 30 no extremo.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button class="btn btn-primary" type="submit" name="acao" value="salvar">
+                        <i class="icon-base ti tabler-device-floppy me-1"></i><?= e(t('admin.save')) ?>
+                    </button>
+                    <a class="btn btn-outline-secondary" href="<?= e(url('admin/perguntas.php')) ?>">
+                        <i class="icon-base ti tabler-arrow-left me-1"></i><?= e(t('admin.back')) ?>
+                    </a>
+
+                    <?php if ((int) $editando['id'] > 0): ?>
+                        <button class="btn btn-outline-info" type="submit" name="acao" value="sugerir" formnovalidate>
+                            <i class="icon-base ti tabler-player-play me-1"></i> Sugerir clipes da TMDB
+                        </button>
+                        <button class="btn btn-outline-danger ms-auto" type="submit" form="form-excluir">
+                            <i class="icon-base ti tabler-trash me-1"></i><?= e(t('admin.delete')) ?>
+                        </button>
+                    <?php endif; ?>
+                </div>
+            </form>
+
+            <?php if ($sugestoesErro !== null): ?>
+                <div class="alert alert-danger mt-4 mb-0" role="alert">
+                    <i class="icon-base ti tabler-alert-circle me-2"></i><?= e($sugestoesErro) ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($sugestoes !== []): ?>
+                <section class="mt-5">
+                    <div class="card-header px-0 border-0 mb-3">
+                        <h5 class="card-title mb-1"><i class="icon-base ti tabler-video me-2"></i>Sugestões de clipes oficiais</h5>
+                        <p class="card-subtitle mb-0">
+                            Clipes de cena da TMDB ordenados por afinidade com a pergunta.
+                            “Usar este clipe” grava o vídeo e mantém legenda/ano atuais.
+                        </p>
+                    </div>
+
+                    <div class="row g-3">
+                        <?php foreach ($sugestoes as $sugestao): ?>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <article class="card h-100<?= !empty($sugestao['atual']) ? ' border-primary' : '' ?>">
+                                    <img class="card-img-top" src="https://i.ytimg.com/vi/<?= e((string) $sugestao['key']) ?>/hqdefault.jpg"
+                                         alt="" loading="lazy" width="320" height="180">
+                                    <div class="card-body d-flex flex-column">
+                                        <h6 class="card-title mb-2"><?= e((string) $sugestao['nome']) ?></h6>
+                                        <p class="card-text mb-3">
+                                            <span class="badge <?= !empty($sugestao['aprovado']) ? 'bg-label-success' : 'bg-label-warning' ?> rounded-pill">
+                                                <?= !empty($sugestao['aprovado']) ? 'recomendado' : 'abaixo do limiar' ?>
+                                            </span>
+                                            <span class="text-body-secondary small ms-1">score <?= numero((float) $sugestao['score'], 1) ?></span>
+                                            <?php if (!empty($sugestao['atual'])): ?>
+                                                <span class="badge bg-label-primary rounded-pill ms-1">atual</span>
+                                            <?php endif; ?>
+                                        </p>
+                                        <form class="mt-auto" method="post" action="<?= e(url('admin/perguntas.php', ['editar' => (int) $editando['id']])) ?>">
+                                            <?= Csrf::campo() ?>
+                                            <input type="hidden" name="acao" value="usar_clipe">
+                                            <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
+                                            <input type="hidden" name="video_key" value="<?= e((string) $sugestao['key']) ?>">
+                                            <input type="hidden" name="video_nome" value="<?= e((string) $sugestao['nome']) ?>">
+                                            <input type="hidden" name="video_idioma" value="<?= e((string) ($sugestao['idioma'] ?? '')) ?>">
+                                            <input type="hidden" name="video_score" value="<?= number_format((float) $sugestao['score'], 1, '.', '') ?>">
+                                            <input type="hidden" name="legenda" value="<?= e((string) ($sugestao['legenda'] ?? '')) ?>">
+                                            <input type="hidden" name="ano" value="<?= (int) ($sugestao['ano'] ?? 0) ?>">
+                                            <button class="btn btn-sm btn-primary w-100" type="submit">
+                                                <i class="icon-base ti tabler-check me-1"></i> Usar este clipe
+                                            </button>
+                                        </form>
+                                    </div>
+                                </article>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <?php if ((int) $editando['id'] > 0): ?>
+                <form id="form-excluir" method="post" action="<?= e(url('admin/perguntas.php')) ?>" data-confirm="<?= e(t('admin.confirm_delete')) ?>">
+                    <?= Csrf::campo() ?>
+                    <input type="hidden" name="acao" value="excluir">
+                    <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
+                </form>
+            <?php endif; ?>
+        </div>
+    </div>
 <?php endif; ?>
 
-<div class="table-responsive">
-    <table class="table table-sm align-middle mb-0">
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>Eixo</th>
-            <th>Afirmação</th>
-            <th>Dir.</th>
-            <th>Peso</th>
-            <th>Núcleo</th>
-            <th>Mídia</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($perguntas as $pergunta): ?>
+<div class="card">
+    <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div>
+            <h5 class="card-title mb-1"><?= e(t('admin.questions')) ?></h5>
+            <p class="card-subtitle mb-0"><?= count($perguntas) ?> perguntas cadastradas</p>
+        </div>
+    </div>
+    <div class="card-datatable table-responsive">
+        <table class="table table-hover align-middle responsive-card mb-0">
+            <thead class="border-top">
             <tr>
-                <td><?= (int) $pergunta['id'] ?></td>
-                <td style="white-space:nowrap"><?= e($eixosPorId[(int) $pergunta['eixo_id']]['nome'] ?? '—') ?></td>
-                <td><?= e($pergunta['texto']) ?></td>
-                <td><?= (int) $pergunta['direcao'] === 1 ? '→' : '←' ?></td>
-                <td><?= (int) $pergunta['peso'] ?></td>
-                <td><?= (int) $pergunta['modo_rapido'] === 1 ? '<span class="pc-badge-mini">núcleo</span>' : '—' ?></td>
-                <td style="white-space:nowrap">
-                    <?php if (($pergunta['midia_tipo'] ?? null) !== null): ?>
-                        <?php
-                        $rotuloMidia = match ($pergunta['midia_tipo']) {
-                            'imagem'   => 'imagem',
-                            'gif'      => 'GIF',
-                            'video_yt' => 'YouTube',
-                            default    => (string) $pergunta['midia_tipo'],
-                        };
-                        ?>
-                        <span class="pc-badge-mini"><?= e($rotuloMidia) ?></span>
-                        <?php if (($pergunta['midia_meta']['legenda'] ?? '') !== ''): ?>
-                            <span class="pc-text-muted" style="font-size:12px;margin-left:6px"><?= e((string) $pergunta['midia_meta']['legenda']) ?></span>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        —
-                    <?php endif; ?>
-                </td>
-                <td><a href="<?= url('admin/perguntas.php', ['editar' => $pergunta['id']]) ?>"><?= e(t('admin.edit')) ?></a></td>
+                <th>#</th>
+                <th>Eixo</th>
+                <th>Afirmação</th>
+                <th>Dir.</th>
+                <th>Peso</th>
+                <th>Núcleo</th>
+                <th>Mídia</th>
+                <th class="text-end">Ações</th>
             </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            <?php foreach ($perguntas as $pergunta): ?>
+                <tr>
+                    <td data-label="#"><span class="badge bg-label-secondary rounded-pill"><?= (int) $pergunta['id'] ?></span></td>
+                    <td data-label="Eixo" class="text-nowrap"><?= e($eixosPorId[(int) $pergunta['eixo_id']]['nome'] ?? '—') ?></td>
+                    <td data-label="Afirmação"><?= e($pergunta['texto']) ?></td>
+                    <td data-label="Dir."><i class="icon-base ti <?= (int) $pergunta['direcao'] === 1 ? 'tabler-arrow-right' : 'tabler-arrow-left' ?>"></i></td>
+                    <td data-label="Peso"><span class="badge bg-label-<?= (int) $pergunta['peso'] === 2 ? 'primary' : 'secondary' ?> rounded-pill"><?= (int) $pergunta['peso'] ?></span></td>
+                    <td data-label="Núcleo"><?= (int) $pergunta['modo_rapido'] === 1 ? '<span class="badge bg-label-primary rounded-pill">núcleo</span>' : '—' ?></td>
+                    <td data-label="Mídia" class="text-nowrap">
+                        <?php if (($pergunta['midia_tipo'] ?? null) !== null): ?>
+                            <?php
+                            $rotuloMidia = match ($pergunta['midia_tipo']) {
+                                'imagem'   => 'imagem',
+                                'gif'      => 'GIF',
+                                'video_yt' => 'YouTube',
+                                default    => (string) $pergunta['midia_tipo'],
+                            };
+                            ?>
+                            <span class="badge bg-label-info rounded-pill"><?= e($rotuloMidia) ?></span>
+                            <?php if (($pergunta['midia_meta']['legenda'] ?? '') !== ''): ?>
+                                <small class="text-body-secondary ms-1"><?= e((string) $pergunta['midia_meta']['legenda']) ?></small>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            —
+                        <?php endif; ?>
+                    </td>
+                    <td data-label="Ações" class="text-end">
+                        <a class="btn btn-sm btn-icon btn-text-secondary rounded-pill" href="<?= e(url('admin/perguntas.php', ['editar' => $pergunta['id']])) ?>" title="<?= e(t('admin.edit')) ?>">
+                            <i class="icon-base ti tabler-pencil"></i>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <?php require __DIR__ . '/partials/foot.php'; ?>

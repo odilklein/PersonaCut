@@ -1,0 +1,94 @@
+/* =============================================
+   PERSONACUT — CAMADA DE CORES SOBRE OS COMPONENTES
+   Carregada DEPOIS de admin-components.css (mecanica).
+   Mantém toda a estrutura/comportamento validado dos
+   componentes e troca apenas a paleta para a identidade
+   do PersonaCut (vinho, creme, dourado e verde-água).
+   ============================================= */
+
+:root {
+    --bs-primary: #53201c;
+    --bs-primary-rgb: 83, 32, 28;
+    --bs-primary-contrast: #fff;
+    --bs-primary-bg-subtle: #f3e4cf;
+    --bs-primary-border-subtle: #e3cba7;
+    --bs-primary-text-emphasis: #3d1714;
+
+    --accent: var(--bs-primary);
+    --accent-strong: var(--bs-primary);
+    --accent-hover: #6b2a24;
+    --accent-strong-hover: #6b2a24;
+    --accent-light: var(--bs-primary-bg-subtle);
+    --accent-glow: rgba(var(--bs-primary-rgb), 0.22);
+    --on-accent: var(--bs-primary-contrast);
+
+    --pc-gold: #b8863b;
+    --pc-gold-soft: #f6ead2;
+    --pc-teal: #33524c;
+    --pc-cream: #f1e6d2;
+
+    --card-radius: 0.75rem;
+    --shadow-sm: 0 1px 3px rgba(60, 32, 26, 0.07);
+    --shadow-md: 0 6px 18px rgba(60, 32, 26, 0.10);
+    --shadow-lg: 0 12px 34px rgba(60, 32, 26, 0.14);
+}
+
+[data-bs-theme="light"] {
+    --bs-body-bg: #f7f1e6;
+    --bs-body-bg-rgb: 247, 241, 230;
+    --bs-paper-bg: #fffdf8;
+    --bs-secondary-bg: #f4ebdd;
+    --bs-secondary-bg-rgb: 244, 235, 221;
+    --bs-tertiary-bg: #ece0cc;
+    --bs-tertiary-bg-rgb: 236, 224, 204;
+    --bs-border-color: #e6d8c2;
+    --bs-heading-color: #2c211d;
+    --bs-body-color: #5d4f47;
+    --bs-body-color-rgb: 93, 79, 71;
+    --bs-secondary-color: #87776b;
+    --bs-secondary-color-rgb: 135, 119, 107;
+    --bs-emphasis-color: #1f1512;
+    --bs-emphasis-color-rgb: 31, 21, 18;
+}
+
+[data-bs-theme="dark"] {
+    --bs-primary: #d98b6f;
+    --bs-primary-rgb: 217, 139, 111;
+    --bs-primary-bg-subtle: #3a211d;
+    --bs-primary-border-subtle: #6b3a31;
+    --bs-primary-text-emphasis: #f0b9a6;
+    --accent: var(--bs-primary);
+    --accent-strong: var(--bs-primary);
+    --accent-hover: #e8a084;
+    --accent-light: var(--bs-primary-bg-subtle);
+    --accent-glow: rgba(var(--bs-primary-rgb), 0.25);
+
+    --bs-body-bg: #0f0d0d;
+    --bs-body-bg-rgb: 15, 13, 13;
+    --bs-paper-bg: #191615;
+    --bs-secondary-bg: #211d1c;
+}
+
+/* Identidade na marca da sidebar. */
+.app-brand .brand-icon,
+.pc-admin-brand-mark {
+    background: linear-gradient(145deg, var(--bs-primary), var(--pc-gold));
+    color: #fff;
+    border-radius: 0.55rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-weight: 800;
+}
+
+.page-header h1 i,
+.page-header h1 .icon-base {
+    color: var(--bs-primary);
+}
+
+/* Realce dourado nos cabeçalhos de card. */
+.card-header {
+    font-weight: 600;
+}

@@ -136,166 +136,174 @@ if ($editar === 'novo') {
 require __DIR__ . '/partials/head.php';
 ?>
 
-<div class="pc-admin__head">
+<div class="page-header">
     <div>
-        <h1><?= e(t('admin.archetypes')) ?></h1>
-        <p class="pc-text-muted" style="font-size:13px">
-            <?= count($arquetipos) ?> arquétipos · um por eixo dominante + polo (o segundo eixo é decorativo).
-        </p>
+        <h1><i class="icon-base ti tabler-layers"></i><?= e(t('admin.archetypes')) ?></h1>
+        <span class="page-subtitle"><?= count($arquetipos) ?> arquétipos · um por eixo dominante + polo</span>
     </div>
-
-    <a class="pc-btn pc-btn--sm" href="<?= url('admin/arquetipos.php', ['editar' => 'novo']) ?>">
-        <?= icon('compass', 16) ?> <?= e(t('admin.new')) ?>
-    </a>
+    <div class="page-header-actions">
+        <a class="btn btn-primary" href="<?= e(url('admin/arquetipos.php', ['editar' => 'novo'])) ?>">
+            <i class="icon-base ti tabler-plus"></i> <?= e(t('admin.new')) ?>
+        </a>
+    </div>
 </div>
 
 <?php if ($editando !== null): ?>
-    <form class="pc-form pc-mb-3" method="post" action="<?= url('admin/arquetipos.php') ?>">
-        <?= Csrf::campo() ?>
-        <input type="hidden" name="acao" value="salvar">
-        <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-1"><?= (int) $editando['id'] > 0 ? 'Editar arquétipo' : 'Novo arquétipo' ?></h5>
+            <p class="card-subtitle mb-0">Defina o vetor de referência e os textos exibidos no resultado</p>
+        </div>
+        <div class="card-body">
+            <form method="post" action="<?= e(url('admin/arquetipos.php')) ?>">
+                <?= Csrf::campo() ?>
+                <input type="hidden" name="acao" value="salvar">
+                <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
 
-        <div class="pc-form__row">
-            <div class="pc-field">
-                <label class="pc-label" for="eixo_dominante_1">Eixo dominante</label>
-                <select class="pc-select" id="eixo_dominante_1" name="eixo_dominante_1">
-                    <?php foreach ($eixos as $eixo): ?>
-                        <option value="<?= (int) $eixo['id'] ?>" <?= (int) $eixo['id'] === (int) $editando['eixo_dominante_1'] ? 'selected' : '' ?>>
-                            <?= e($eixo['nome']) ?>
-                        </option>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="eixo_dominante_1">Eixo dominante</label>
+                        <select class="form-select" id="eixo_dominante_1" name="eixo_dominante_1">
+                            <?php foreach ($eixos as $eixo): ?>
+                                <option value="<?= (int) $eixo['id'] ?>" <?= (int) $eixo['id'] === (int) $editando['eixo_dominante_1'] ? 'selected' : '' ?>>
+                                    <?= e($eixo['nome']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="polo_1">Polo dominante</label>
+                        <select class="form-select" id="polo_1" name="polo_1">
+                            <option value="E" <?= $editando['polo_1'] === 'E' ? 'selected' : '' ?>>Esquerdo</option>
+                            <option value="D" <?= $editando['polo_1'] === 'D' ? 'selected' : '' ?>>Direito</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="eixo_dominante_2">Eixo secundário (opcional)</label>
+                        <select class="form-select" id="eixo_dominante_2" name="eixo_dominante_2">
+                            <option value="0">Nenhum</option>
+                            <?php foreach ($eixos as $eixo): ?>
+                                <option value="<?= (int) $eixo['id'] ?>" <?= (int) $eixo['id'] === (int) ($editando['eixo_dominante_2'] ?? 0) ? 'selected' : '' ?>>
+                                    <?= e($eixo['nome']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="polo_2">Polo secundário</label>
+                        <select class="form-select" id="polo_2" name="polo_2">
+                            <option value="E" <?= ($editando['polo_2'] ?? 'E') === 'E' ? 'selected' : '' ?>>Esquerdo</option>
+                            <option value="D" <?= ($editando['polo_2'] ?? 'E') === 'D' ? 'selected' : '' ?>>Direito</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label mb-0">Vetor de referência <small class="text-body-secondary">(0 = polo esquerdo, 100 = direito)</small></label>
+                    </div>
+                    <?php foreach ($eixos as $indice => $eixo): ?>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label" for="arq_eixo_<?= $indice + 1 ?>"><?= e($eixo['nome']) ?></label>
+                            <input class="form-control" id="arq_eixo_<?= $indice + 1 ?>" name="eixo_<?= $indice + 1 ?>" type="number" min="0" max="100" value="<?= (int) ($editando['vetor'][$indice] ?? 50) ?>">
+                        </div>
                     <?php endforeach; ?>
-                </select>
-            </div>
 
-            <div class="pc-field">
-                <label class="pc-label" for="polo_1">Polo dominante</label>
-                <select class="pc-select" id="polo_1" name="polo_1">
-                    <option value="E" <?= $editando['polo_1'] === 'E' ? 'selected' : '' ?>>Esquerdo</option>
-                    <option value="D" <?= $editando['polo_1'] === 'D' ? 'selected' : '' ?>>Direito</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="pc-form__row">
-            <div class="pc-field">
-                <label class="pc-label" for="eixo_dominante_2">Eixo secundário (opcional)</label>
-                <select class="pc-select" id="eixo_dominante_2" name="eixo_dominante_2">
-                    <option value="0">Nenhum</option>
-                    <?php foreach ($eixos as $eixo): ?>
-                        <option value="<?= (int) $eixo['id'] ?>" <?= (int) $eixo['id'] === (int) ($editando['eixo_dominante_2'] ?? 0) ? 'selected' : '' ?>>
-                            <?= e($eixo['nome']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="pc-field">
-                <label class="pc-label" for="polo_2">Polo secundário</label>
-                <select class="pc-select" id="polo_2" name="polo_2">
-                    <option value="E" <?= ($editando['polo_2'] ?? 'E') === 'E' ? 'selected' : '' ?>>Esquerdo</option>
-                    <option value="D" <?= ($editando['polo_2'] ?? 'E') === 'D' ? 'selected' : '' ?>>Direito</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="pc-field">
-            <span class="pc-label">Vetor de referência (0 = polo esquerdo, 100 = direito)</span>
-        </div>
-
-        <div class="pc-form__row" style="grid-template-columns: repeat(4, minmax(0,1fr))">
-            <?php foreach ($eixos as $indice => $eixo): ?>
-                <div class="pc-field">
-                    <label class="pc-label" for="arq_eixo_<?= $indice + 1 ?>"><?= e($eixo['nome']) ?></label>
-                    <input class="pc-input" id="arq_eixo_<?= $indice + 1 ?>" name="eixo_<?= $indice + 1 ?>" type="number" min="0" max="100"
-                           value="<?= (int) ($editando['vetor'][$indice] ?? 50) ?>">
+                    <div class="col-12">
+                        <label class="form-label" for="titulo">Título do arquétipo</label>
+                        <input class="form-control" id="titulo" name="titulo" type="text" maxlength="120" value="<?= e($editando['titulo']) ?>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="descricao">Descrição psicológica</label>
+                        <textarea class="form-control" id="descricao" name="descricao" rows="4" required><?= e($editando['descricao']) ?></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="ritual_cinema">Ritual de cinema</label>
+                        <textarea class="form-control" id="ritual_cinema" name="ritual_cinema" rows="4" required><?= e($editando['ritual_cinema']) ?></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="titulo_key">Chave do título</label>
+                        <input class="form-control" id="titulo_key" name="titulo_key" type="text" value="<?= e($editando['titulo_key']) ?>" placeholder="auto">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="descricao_key">Chave da descrição</label>
+                        <input class="form-control" id="descricao_key" name="descricao_key" type="text" value="<?= e($editando['descricao_key']) ?>" placeholder="auto">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="ritual_cinema_key">Chave do ritual</label>
+                        <input class="form-control" id="ritual_cinema_key" name="ritual_cinema_key" type="text" value="<?= e($editando['ritual_cinema_key']) ?>" placeholder="auto">
+                    </div>
                 </div>
-            <?php endforeach; ?>
-        </div>
 
-        <div class="pc-field">
-            <label class="pc-label" for="titulo">Título do arquétipo</label>
-            <input class="pc-input" id="titulo" name="titulo" type="text" maxlength="120" value="<?= e($editando['titulo']) ?>" required>
-        </div>
-
-        <div class="pc-field">
-            <label class="pc-label" for="descricao">Descrição psicológica</label>
-            <textarea class="pc-textarea" id="descricao" name="descricao" required><?= e($editando['descricao']) ?></textarea>
-        </div>
-
-        <div class="pc-field">
-            <label class="pc-label" for="ritual_cinema">Ritual de cinema</label>
-            <textarea class="pc-textarea" id="ritual_cinema" name="ritual_cinema" style="min-height:70px" required><?= e($editando['ritual_cinema']) ?></textarea>
-        </div>
-
-        <div class="pc-form__row pc-form__row--3">
-            <div class="pc-field">
-                <label class="pc-label" for="titulo_key">Chave do título</label>
-                <input class="pc-input" id="titulo_key" name="titulo_key" type="text" value="<?= e($editando['titulo_key']) ?>" placeholder="auto">
-            </div>
-            <div class="pc-field">
-                <label class="pc-label" for="descricao_key">Chave da descrição</label>
-                <input class="pc-input" id="descricao_key" name="descricao_key" type="text" value="<?= e($editando['descricao_key']) ?>" placeholder="auto">
-            </div>
-            <div class="pc-field">
-                <label class="pc-label" for="ritual_cinema_key">Chave do ritual</label>
-                <input class="pc-input" id="ritual_cinema_key" name="ritual_cinema_key" type="text" value="<?= e($editando['ritual_cinema_key']) ?>" placeholder="auto">
-            </div>
-        </div>
-
-        <div class="pc-form__actions">
-            <button class="pc-btn" type="submit"><?= e(t('admin.save')) ?></button>
-            <a class="pc-btn pc-btn--ghost" href="<?= url('admin/arquetipos.php') ?>"><?= e(t('admin.back')) ?></a>
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="icon-base ti tabler-device-floppy me-1"></i><?= e(t('admin.save')) ?>
+                    </button>
+                    <a class="btn btn-outline-secondary" href="<?= e(url('admin/arquetipos.php')) ?>"><?= e(t('admin.back')) ?></a>
+                    <?php if ((int) $editando['id'] > 0): ?>
+                        <button class="btn btn-outline-danger ms-auto" type="submit" form="form-excluir">
+                            <i class="icon-base ti tabler-trash me-1"></i><?= e(t('admin.delete')) ?>
+                        </button>
+                    <?php endif; ?>
+                </div>
+            </form>
 
             <?php if ((int) $editando['id'] > 0): ?>
-                <button class="pc-btn pc-btn--light" type="submit" form="form-excluir"><?= e(t('admin.delete')) ?></button>
+                <form id="form-excluir" method="post" action="<?= e(url('admin/arquetipos.php')) ?>" data-confirm="<?= e(t('admin.confirm_delete')) ?>">
+                    <?= Csrf::campo() ?>
+                    <input type="hidden" name="acao" value="excluir">
+                    <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
+                </form>
             <?php endif; ?>
         </div>
-    </form>
-
-    <?php if ((int) $editando['id'] > 0): ?>
-        <form id="form-excluir" method="post" action="<?= url('admin/arquetipos.php') ?>" data-confirm="<?= e(t('admin.confirm_delete')) ?>">
-            <?= Csrf::campo() ?>
-            <input type="hidden" name="acao" value="excluir">
-            <input type="hidden" name="id" value="<?= (int) $editando['id'] ?>">
-        </form>
-    <?php endif; ?>
+    </div>
 <?php endif; ?>
 
-<div class="table-responsive">
-    <table class="table table-sm align-middle mb-0">
-        <thead>
-        <tr>
-            <th>Arquétipo</th>
-            <th>Eixo dominante</th>
-            <th>Secundário</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($arquetipos as $arquetipo): ?>
-            <?php
-            $eixo1 = $eixosPorId[$arquetipo['eixo_dominante_1']] ?? null;
-            $eixo2 = $arquetipo['eixo_dominante_2'] !== null
-                ? ($eixosPorId[$arquetipo['eixo_dominante_2']] ?? null)
-                : null;
-            ?>
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-1"><?= e(t('admin.archetypes')) ?></h5>
+        <p class="card-subtitle mb-0">Ordenados por eixo dominante</p>
+    </div>
+    <div class="card-datatable table-responsive">
+        <table class="table table-hover align-middle responsive-card mb-0">
+            <thead class="border-top">
             <tr>
-                <td>
-                    <strong><?= e($arquetipo['titulo']) ?></strong>
-                    <div class="pc-text-muted" style="font-size:11px"><?= e($arquetipo['titulo_key']) ?></div>
-                </td>
-                <td>
-                    <?= e($eixo1['nome'] ?? '—') ?>
-                    <span class="pc-badge-mini"><?= $arquetipo['polo_1'] === 'E' ? 'esquerdo' : 'direito' ?></span>
-                </td>
-                <td class="pc-text-muted">
-                    <?= $eixo2 !== null ? e($eixo2['nome']) . ' · ' . ($arquetipo['polo_2'] === 'E' ? 'esquerdo' : 'direito') : '—' ?>
-                </td>
-                <td><a href="<?= url('admin/arquetipos.php', ['editar' => $arquetipo['id']]) ?>"><?= e(t('admin.edit')) ?></a></td>
+                <th>Arquétipo</th>
+                <th>Eixo dominante</th>
+                <th>Secundário</th>
+                <th class="text-end">Ações</th>
             </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            <?php foreach ($arquetipos as $arquetipo): ?>
+                <?php
+                $eixo1 = $eixosPorId[$arquetipo['eixo_dominante_1']] ?? null;
+                $eixo2 = $arquetipo['eixo_dominante_2'] !== null
+                    ? ($eixosPorId[$arquetipo['eixo_dominante_2']] ?? null)
+                    : null;
+                ?>
+                <tr>
+                    <td data-label="Arquétipo">
+                        <span class="text-heading fw-medium"><?= e($arquetipo['titulo']) ?></span>
+                        <small class="text-body-secondary d-block"><?= e($arquetipo['titulo_key']) ?></small>
+                    </td>
+                    <td data-label="Eixo dominante">
+                        <?= e($eixo1['nome'] ?? '—') ?>
+                        <span class="badge bg-label-primary rounded-pill ms-1"><?= $arquetipo['polo_1'] === 'E' ? 'esquerdo' : 'direito' ?></span>
+                    </td>
+                    <td data-label="Secundário">
+                        <?= $eixo2 !== null
+                            ? e($eixo2['nome']) . ' <span class="badge bg-label-secondary rounded-pill">' . ($arquetipo['polo_2'] === 'E' ? 'esquerdo' : 'direito') . '</span>'
+                            : '<span class="text-body-secondary">—</span>' ?>
+                    </td>
+                    <td data-label="Ações" class="text-end">
+                        <a class="btn btn-sm btn-icon btn-text-secondary rounded-pill" href="<?= e(url('admin/arquetipos.php', ['editar' => $arquetipo['id']])) ?>" title="<?= e(t('admin.edit')) ?>">
+                            <i class="icon-base ti tabler-pencil"></i>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <?php require __DIR__ . '/partials/foot.php'; ?>
